@@ -2,7 +2,7 @@
 
 ## Overview
 
-`rollpca` is a package that provides analytical computation of rolling portfolio optimization for time-series data.
+`rollpca` is a package that provides analytical computation of rolling and expanding principal component analysis for time-series data.
 
 ## Installation
 
@@ -19,7 +19,7 @@ Load the package and supply a dataset:
 
 ``` r
 library(roll) # (>= 1.1.7)
-library(rollport)
+library(rollpca)
 
 n <- 15
 m <- 3
