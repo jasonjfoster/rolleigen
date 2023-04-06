@@ -1,0 +1,4 @@
+useDynLib(rollpca, .registration = TRUE)
+export(roll_eigen)
+importFrom(Rcpp, evalCpp)
+importFrom(RcppParallel, RcppParallelLibs)
