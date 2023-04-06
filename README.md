@@ -28,7 +28,7 @@ x <- matrix(rnorm(n * m), nrow = n, ncol = m)
 Then, to compute rolling eigenvalues and eigenvectors, use the `roll_eigen` function:
 
 ```r
-# rolling portfolio optimization to minimize risk
+# rolling eigenvalues and eigenvectors with complete windows
 roll_eigen(x, width = 5)
 ```
 
