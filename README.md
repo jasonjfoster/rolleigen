@@ -1,7 +1,5 @@
 # rollpca
 
-[![](https://github.com/jjf234/rollpca/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jjf234/rollpca/actions/workflows/check-standard.yaml)
-
 ## Overview
 
 `rollpca` is a package that provides analytical computation of rolling and expanding principal component analysis for time-series data.
