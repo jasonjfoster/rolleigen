@@ -1,5 +1,7 @@
 # rollpca
 
+[![](https://codecov.io/gh/jjf234/rollpca/graph/badge.svg)](https://app.codecov.io/github/jjf234/rollpca)
+
 ## Overview
 
 `rollpca` is a package that provides analytical computation of rolling and expanding principal component analysis for time-series data.
