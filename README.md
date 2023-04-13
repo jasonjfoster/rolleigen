@@ -24,12 +24,22 @@ library(rollpca)
 n <- 15
 m <- 3
 x <- matrix(rnorm(n * m), nrow = n, ncol = m)
+weights <- 0.9 ^ (n:1)
 ```
 Then, to compute rolling eigenvalues and eigenvectors, use the `roll_eigen` function:
 
 ```r
 # rolling eigenvalues and eigenvectors with complete windows
 roll_eigen(x, width = 5)
+
+# rolling eigenvalues and eigenvectors with partial windows
+roll_eigen(x, width = 5, min_obs = 1)
+
+# expanding eigenvalues and eigenvectors with partial windows
+roll_eigen(x, width = n, min_obs = 1)
+
+# expanding eigenvalues and eigenvectors with partial windows and weights
+roll_eigen(x, width = n, min_obs = 1, weights = weights)
 ```
 
 Note that handling of missing values is supported as well (see the `min_obs`, `complete_obs`, and `na_restore` arguments).
