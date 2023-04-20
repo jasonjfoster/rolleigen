@@ -31,3 +31,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// roll_pcr
+List roll_pcr(const SEXP& x, const SEXP& y, const int& width, const int& n_comps, const arma::vec& weights, const bool& intercept, const bool& center, const bool& scale, const int& min_obs, const bool& complete_obs, const bool& na_restore, const bool& online);
+RcppExport SEXP _rollpca_roll_pcr(SEXP xSEXP, SEXP ySEXP, SEXP widthSEXP, SEXP n_compsSEXP, SEXP weightsSEXP, SEXP interceptSEXP, SEXP centerSEXP, SEXP scaleSEXP, SEXP min_obsSEXP, SEXP complete_obsSEXP, SEXP na_restoreSEXP, SEXP onlineSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int& >::type width(widthSEXP);
+    Rcpp::traits::input_parameter< const int& >::type n_comps(n_compsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type intercept(interceptSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type center(centerSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< const int& >::type min_obs(min_obsSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type complete_obs(complete_obsSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type na_restore(na_restoreSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type online(onlineSEXP);
+    rcpp_result_gen = Rcpp::wrap(roll_pcr(x, y, width, n_comps, weights, intercept, center, scale, min_obs, complete_obs, na_restore, online));
+    return rcpp_result_gen;
+END_RCPP
+}

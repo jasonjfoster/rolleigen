@@ -9,9 +9,11 @@
 
 /* .Call calls */
 extern SEXP _rollpca_roll_eigen(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _rollpca_roll_pcr(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-  {"_rollpca_roll_eigen", (DL_FUNC) &_rollpca_roll_eigen, 9},
+  {"_rollpca_roll_eigen", (DL_FUNC) &_rollpca_roll_eigen,  9},
+  {"_rollpca_roll_pcr",   (DL_FUNC) &_rollpca_roll_pcr,   12},
   {NULL, NULL, 0}
 };
 

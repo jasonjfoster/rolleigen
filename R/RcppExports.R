@@ -5,3 +5,7 @@
     .Call(`_rollpca_roll_eigen`, x, width, weights, center, scale, min_obs, complete_obs, na_restore, online)
 }
 
+.roll_pcr <- function(x, y, width, n_comps, weights, intercept, center, scale, min_obs, complete_obs, na_restore, online) {
+    .Call(`_rollpca_roll_pcr`, x, y, width, n_comps, weights, intercept, center, scale, min_obs, complete_obs, na_restore, online)
+}
+

@@ -42,4 +42,20 @@ roll_eigen(x, width = n, min_obs = 1)
 roll_eigen(x, width = n, min_obs = 1, weights = weights)
 ```
 
+Or use the `roll_pcr` function to compute rolling and expanding principal component regressions:
+
+``` r
+# rolling regressions with complete windows
+roll_pcr(x, y, width = 5, n_comps = 1)
+
+# rolling regressions with partial windows
+roll_pcr(x, y, width = 5, n_comps = 1, min_obs = 1)
+
+# expanding regressions with partial windows
+roll_pcr(x, y, width = n, n_comps = 1, min_obs = 1)
+
+# expanding regressions with partial windows and weights
+roll_pcr(x, y, width = n, n_comps = 1, min_obs = 1, weights = weights)
+```
+
 Note that handling of missing values is supported as well (see the `min_obs`, `complete_obs`, and `na_restore` arguments).
