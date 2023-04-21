@@ -13,4 +13,4 @@ SystemRequirements: GNU make
 Roxygen: list(old_usage = TRUE)
 RoxygenNote: 7.2.3
 Encoding: UTF-8
-Suggests: covr, testthat, zoo, roll
+Suggests: covr, testthat, zoo, pls, roll

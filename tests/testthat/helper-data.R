@@ -7,6 +7,7 @@ dates <- rev(seq(Sys.Date(), length.out = n_obs, by = "-1 day"))
 
 # test arguments
 test_width <- c(1, 5, 10, 15)
+test_comps <- c(1, 2, 3)
 test_min_obs <- 1
 
 # test data
