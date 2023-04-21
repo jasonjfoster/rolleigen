@@ -9,7 +9,7 @@ roll_pcr(x, y, width, n_comps = ncol(x), weights = rep(1, width),
   complete_obs = TRUE, na_restore = FALSE, online = TRUE)
 }
 \arguments{
-\item{x}{vector or matrix. Rows are observations and columns are the independent variables.}
+\item{x}{matrix. Rows are observations and columns are the independent variables.}
 
 \item{y}{vector or matrix. Rows are observations and columns are the dependent variables.}
 
@@ -43,8 +43,6 @@ A list containing the following components:
 An object is the same class and dimension (with an added column for the intercept) as \code{x}.}
 \item{r.squared}{A list of objects with the rolling and expanding r-squareds for each \code{y}.
 An object is the same class as \code{x}.}
-\item{std.error}{A list of objects with the rolling and expanding standard errors for each \code{y}.
-An object is the same class and dimension (with an added column for the intercept) as \code{x}.}
 }
 \description{
 A function for computing the rolling and expanding principal component regressions of time-series data.

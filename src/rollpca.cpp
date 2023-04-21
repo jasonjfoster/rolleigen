@@ -196,18 +196,18 @@ arma::cube roll_cov_z(const NumericMatrix& x, const int& width,
                       const bool& online) {
   
   int n = weights.size();
-  int n_rows = x.nrow();
-  int n_cols = x.ncol();
-  arma::uvec arma_any_na(n_rows);
-  arma::cube arma_cov(n_cols, n_cols, n_rows);
+  int n_rows_x = x.nrow();
+  int n_cols_x = x.ncol();
+  arma::uvec arma_any_na(n_rows_x);
+  arma::cube arma_cov(n_cols_x, n_cols_x, n_rows_x);
   
   // check 'width' argument for errors
   check_width(width);
   
   // default 'weights' argument is equal-weighted,
   // otherwise check argument for errors
-  check_weights_x(n_rows, width, weights);
-  bool status = check_lambda(weights, n_rows, width, online);
+  check_weights_x(n_rows_x, width, weights);
+  bool status = check_lambda(weights, n_rows_x, width, online);
   
   // default 'min_obs' argument is 'width',
   // otherwise check argument for errors
@@ -224,19 +224,19 @@ arma::cube roll_cov_z(const NumericMatrix& x, const int& width,
   // compute rolling covariances
   if (status && online) {
     
-    roll::RollCovOnlineMatXX roll_cov_online(x, n, n_rows, n_cols, width,
+    roll::RollCovOnlineMatXX roll_cov_online(x, n, n_rows_x, n_cols_x, width,
                                              weights, center, scale, min_obs,
                                              arma_any_na, na_restore,
                                              arma_cov);
-    parallelFor(0, n_cols, roll_cov_online);
+    parallelFor(0, n_cols_x, roll_cov_online);
     
   } else {
     
-    roll::RollCovOfflineMatXX roll_cov_offline(x, n, n_rows, n_cols, width,
+    roll::RollCovOfflineMatXX roll_cov_offline(x, n, n_rows_x, n_cols_x, width,
                                                weights, center, scale, min_obs,
                                                arma_any_na, na_restore,
                                                arma_cov);
-    parallelFor(0, n_rows * n_cols * (n_cols + 1) / 2, roll_cov_offline);
+    parallelFor(0, n_rows_x * n_cols_x * (n_cols_x + 1) / 2, roll_cov_offline);
     
   }
   
@@ -355,7 +355,7 @@ List roll_pcr_z(const NumericMatrix& x, const NumericVector& y,
   if (status && online) {
     
     roll::RollCovOnlineMatLm roll_cov_online(data, n, n_rows_xy, n_cols_x, width,
-                                             weights, intercept, min_obs,
+                                             weights, true, min_obs,
                                              arma_any_na, na_restore,
                                              arma_n_obs, arma_sum_w, arma_mean,
                                              arma_cov);
@@ -364,7 +364,7 @@ List roll_pcr_z(const NumericMatrix& x, const NumericVector& y,
   } else {
     
     roll::RollCovOfflineMatLm roll_cov_offline(data, n, n_rows_xy, n_cols_x, width,
-                                               weights, intercept, min_obs,
+                                               weights, true, min_obs,
                                                arma_any_na, na_restore,
                                                arma_n_obs, arma_sum_w, arma_mean,
                                                arma_cov);
@@ -380,8 +380,8 @@ List roll_pcr_z(const NumericMatrix& x, const NumericVector& y,
   // compute rolling principal component regressions
   arma::uvec arma_cols = seq(n_cols_x - 1);
   rollpca::RollPcrInterceptTRUE roll_pcr_slices(arma_cov, n_rows_xy, n_cols_x, arma_cols, arma_comps,
-                                             arma_n_obs, arma_mean, arma_eigen_vectors,
-                                             arma_coef, arma_rsq);
+                                                arma_n_obs, arma_mean, arma_eigen_vectors,
+                                                arma_coef, arma_rsq);
   parallelFor(0, n_rows_xy, roll_pcr_slices);
   
   // create and return a list
@@ -419,7 +419,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
   if (n_cols_y == 1) {
     
     result_z = roll_pcr_z(xx, yy(_, 0), width, n_comps, 
-                          weights, true, center, scale,
+                          weights, intercept, center, scale,
                           min_obs, complete_obs, na_restore,
                           online);
     

@@ -1,15 +1,11 @@
 rollapplyr_cube <- function(f, x, width) {
   
-  n_rows <- nrow(x)
-  n_cols <- ncol(x)
-  result <- array(as.numeric(NA), c(n_cols, n_cols, n_rows))
+  n_rows_x <- nrow(x)
+  n_cols_x <- ncol(x)
+  result <- array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x))
   
-  for (i in width:n_rows) {
-    
-    temp <- f(x[max(1, i - width + 1):i, , drop = FALSE])
-    
-    result[ , , i] <- temp
-    
+  for (i in 1:n_rows_x) {
+    result[ , , i] <- f(x[max(1, i - width + 1):i, , drop = FALSE])
   }
   
   return(result)
@@ -18,30 +14,27 @@ rollapplyr_cube <- function(f, x, width) {
 
 rollapplyr_eigen <- function(x, width) {
   
-  n_rows <- nrow(x)
-  n_cols <- ncol(x)
-  evals <- matrix(as.numeric(NA), n_rows, n_cols)
-  evecs <- array(as.numeric(NA), c(n_cols, n_cols, n_rows))
-  result <- list()
+  n_rows_x <- nrow(x)
+  n_cols_x <- ncol(x)
+  result <- list("values" = matrix(as.numeric(NA), n_rows_x, n_cols_x),
+                 "vectors" = array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x)))
   
-  if (zoo::is.zoo(x)) {
     x_attr <- attributes(x)
-  }
   
   cov <- rollapplyr_cube(cov, x, width)
   
-  for (i in 1:n_rows) {
+  for (i in 1:n_rows_x) {
     
     if (anyNA(cov[ , , i])) {
       
-      evals[i , ] <- NA
-      evecs[ , , i] <- NA
+      result[["values"]][i , ] <- NA
+      result[["vectors"]][ , , i] <- NA
       
     } else {
       
       eigen <- eigen(cov[ , , i])
-      evals[i, ] <- eigen$values
-      evecs[ , , i] <- eigen$vectors
+      result[["values"]][i, ] <- eigen$values
+      result[["vectors"]][ , , i] <- eigen$vectors
       
     }
     
@@ -49,13 +42,10 @@ rollapplyr_eigen <- function(x, width) {
   
   if (exists("x_attr")) {
     
-    attributes(evals) <- x_attr
-    dimnames(evecs) <- list(x_attr$dimnames[[2]], NULL)
+    attributes(result[["values"]]) <- x_attr
+    dimnames(result[["vectors"]]) <- list(x_attr$dimnames[[2]], NULL)
     
   }
-  
-  result <- list("values" = evals,
-                 "vectors" = evecs)
   
   return(result)
   
