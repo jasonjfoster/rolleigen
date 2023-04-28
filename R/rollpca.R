@@ -82,7 +82,7 @@ roll_eigen <- function(x, width, weights = rep(1, width), center = TRUE, scale =
 ##' n <- 15
 ##' m <- 3
 ##' x <- matrix(rnorm(n * m), nrow = n, ncol = m)
-##' y <- matrix(rnorm(n), nrow = n, ncol = 1)
+##' y <- rnorm(n)
 ##' weights <- 0.9 ^ (n:1)
 ##' 
 ##' # rolling regressions with complete windows

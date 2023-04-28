@@ -151,6 +151,29 @@ List dimnames_lm_x(const List& input, const int& n_cols_x,
   
 }
 
+CharacterVector dimnames_lm_y(const List& input, const int& n_cols_y) {
+  
+  if (input.size() > 1) {
+    
+    return input[1];
+    
+  } else {
+    
+    CharacterVector result(n_cols_y);
+    
+    for (int i = 0; i < n_cols_y; i++) {
+      
+      result[i] = "y";
+      result[i] += i + 1;
+      
+    }
+    
+    return result;
+    
+  }
+  
+}
+
 arma::uvec any_na_x(const NumericMatrix& x) {
   
   int n_rows_x = x.nrow();
@@ -400,25 +423,170 @@ List roll_pcr(const SEXP& x, const SEXP& y,
               const int& min_obs, const bool& complete_obs,
               const bool& na_restore, const bool& online) {
   
-  // if (Rf_isMatrix(x) && Rf_isMatrix(y)) {
-  
-  NumericMatrix xx(x);
-  NumericMatrix yy(y);
-  int n_rows_xy = xx.nrow();  
-  int n_cols_x = xx.ncol();
-  int n_cols_y = yy.ncol();
-  List result_z(2);
-  List result(2);
-  
-  if (intercept) {
-    n_cols_x += 1;
-  }
-  
-  // create a list of matrices,
-  // otherwise a list of lists
-  if (n_cols_y == 1) {
+  if (Rf_isMatrix(x) && Rf_isMatrix(y)) {
     
-    result_z = roll_pcr_z(xx, yy(_, 0), width, n_comps, 
+    NumericMatrix xx(x);
+    NumericMatrix yy(y);
+    int n_rows_xy = xx.nrow();  
+    int n_cols_x = xx.ncol();
+    int n_cols_y = yy.ncol();
+    List result_coef(n_cols_y);
+    List result_rsq(n_cols_y);
+    // List result_se(n_cols_y);
+    List result_z(2);
+    List result(2);
+    
+    if (intercept) {
+      n_cols_x += 1;
+    }
+    
+    // create a list of matrices,
+    // otherwise a list of lists
+    if (n_cols_y == 1) {
+      
+      result_z = roll_pcr_z(xx, yy(_, 0), width, n_comps, 
+                            weights, intercept, center, scale,
+                            min_obs, complete_obs, na_restore,
+                            online);
+      
+      arma::mat arma_coef_z = result_z[0];
+      arma::mat arma_rsq_z = result_z[1];
+      // arma::mat arma_se_z = result_z[2];
+      
+      // create and return a matrix or xts object for coefficients
+      NumericVector coef(wrap(arma_coef_z));
+      coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
+      List x_dimnames = xx.attr("dimnames");
+      coef.attr("dimnames") = dimnames_lm_x(x_dimnames, n_cols_x, intercept);
+      coef.attr("index") = xx.attr("index");
+      coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
+      coef.attr(".indexTZ") = xx.attr(".indexTZ");
+      coef.attr("tclass") = xx.attr("tclass");
+      coef.attr("tzone") = xx.attr("tzone");
+      coef.attr("class") = xx.attr("class");
+      
+      // create and return a matrix or xts object for r-squareds
+      NumericVector rsq(wrap(arma_rsq_z));
+      rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
+      if (x_dimnames.size() > 1) {
+        rsq.attr("dimnames") = List::create(x_dimnames[0], "R-squared");
+      } else {
+        rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
+      }
+      rsq.attr("index") = xx.attr("index");
+      rsq.attr(".indexCLASS") = xx.attr(".indexCLASS");
+      rsq.attr(".indexTZ") = xx.attr(".indexTZ");
+      rsq.attr("tclass") = xx.attr("tclass");
+      rsq.attr("tzone") = xx.attr("tzone");
+      rsq.attr("class") = xx.attr("class");
+      
+      // // create and return a matrix or xts object for standard errors
+      // NumericVector se(wrap(arma_se_z));
+      // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
+      // se.attr("dimnames") = coef.attr("dimnames");
+      // se.attr("index") = xx.attr("index");
+      // se.attr(".indexCLASS") = xx.attr(".indexCLASS");
+      // se.attr(".indexTZ") = xx.attr(".indexTZ");
+      // se.attr("tclass") = xx.attr("tclass");
+      // se.attr("tzone") = xx.attr("tzone");
+      // se.attr("class") = xx.attr("class");
+      
+      // create and return a list
+      result = List::create(Named("coefficients") = coef,
+                            Named("r.squared") = rsq);
+      // Named("std.error") = se);
+      
+    } else {
+      
+      for (int z = 0; z < n_cols_y; z++) {
+        
+        result_z = roll_pcr_z(xx, yy(_, z), width, n_comps,
+                              weights, intercept, center, scale,
+                              min_obs, complete_obs, na_restore,
+                              online);
+        
+        arma::mat arma_coef_z = result_z[0];
+        arma::mat arma_rsq_z = result_z[1];
+        // arma::mat arma_se_z = result_z[2];
+        
+        // create and return a matrix or xts object for coefficients
+        NumericVector coef(wrap(arma_coef_z));
+        coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
+        List dimnames_x = xx.attr("dimnames");
+        coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
+        coef.attr("index") = xx.attr("index");
+        coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
+        coef.attr(".indexTZ") = xx.attr(".indexTZ");
+        coef.attr("tclass") = xx.attr("tclass");
+        coef.attr("tzone") = xx.attr("tzone");
+        coef.attr("class") = xx.attr("class");
+        
+        // create and return a matrix or xts object for r-squareds
+        NumericVector rsq(wrap(arma_rsq_z));
+        rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
+        if (dimnames_x.size() > 1) {
+          rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
+        } else {
+          rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
+        }
+        rsq.attr("index") = xx.attr("index");
+        rsq.attr(".indexCLASS") = xx.attr(".indexCLASS");
+        rsq.attr(".indexTZ") = xx.attr(".indexTZ");
+        rsq.attr("tclass") = xx.attr("tclass");
+        rsq.attr("tzone") = xx.attr("tzone");
+        rsq.attr("class") = xx.attr("class");
+        
+        // // create and return a matrix or xts object for standard errors
+        // NumericVector se(wrap(arma_se_z));
+        // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
+        // se.attr("dimnames") = coef.attr("dimnames");
+        // se.attr("index") = xx.attr("index");
+        // se.attr(".indexCLASS") = xx.attr(".indexCLASS");
+        // se.attr(".indexTZ") = xx.attr(".indexTZ");
+        // se.attr("tclass") = xx.attr("tclass");
+        // se.attr("tzone") = xx.attr("tzone");
+        // se.attr("class") = xx.attr("class");
+        
+        result_coef(z) = coef;
+        result_rsq(z) = rsq;
+        // result_se(z) = se;
+        
+      }
+      
+      // add names to each list
+      List dimnames_y = yy.attr("dimnames");
+      result_coef.attr("names") = dimnames_lm_y(dimnames_y, n_cols_y);
+      result_rsq.attr("names") = result_coef.attr("names");
+      // result_se.attr("names") = result_coef.attr("names");
+      
+      // create and return a list
+      result = List::create(Named("coefficients") = result_coef,
+                            Named("r.squared") = result_rsq);
+      // Named("std.error") = result_se);
+      
+    }
+    
+    return result;
+    
+  } else if (Rf_isMatrix(x)) {
+    
+    NumericMatrix xx(x);
+    NumericVector yy(y);
+    
+    int n_rows_xy = xx.nrow();
+    int n_cols_x = xx.ncol();
+    List result_coef(1);
+    List result_rsq(1);
+    // List result_se(1);
+    List result_z(2);
+    List result(2);
+    
+    if (intercept) {
+      n_cols_x += 1;
+    }
+    
+    // create a list of matrices
+    result_z = roll_pcr_z(xx, yy, width, n_comps,
                           weights, intercept, center, scale,
                           min_obs, complete_obs, na_restore,
                           online);
@@ -430,8 +598,8 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     // create and return a matrix or xts object for coefficients
     NumericVector coef(wrap(arma_coef_z));
     coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-    List x_dimnames = xx.attr("dimnames");
-    coef.attr("dimnames") = dimnames_lm_x(x_dimnames, n_cols_x, intercept);
+    List dimnames_x = xx.attr("dimnames");
+    coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
     coef.attr("index") = xx.attr("index");
     coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
     coef.attr(".indexTZ") = xx.attr(".indexTZ");
@@ -442,8 +610,8 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     // create and return a matrix or xts object for r-squareds
     NumericVector rsq(wrap(arma_rsq_z));
     rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-    if (x_dimnames.size() > 1) {
-      rsq.attr("dimnames") = List::create(x_dimnames[0], "R-squared");
+    if (dimnames_x.size() > 1) {
+      rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
     } else {
       rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
     }
@@ -470,10 +638,14 @@ List roll_pcr(const SEXP& x, const SEXP& y,
                           Named("r.squared") = rsq);
     // Named("std.error") = se);
     
+    return result;
+    
+  } else {
+    
+    stop("'x' is not a matrix");
+    
+    // return 0;
+    
   }
-  
-  return result;
-  
-  // }
   
 }

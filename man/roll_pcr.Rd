@@ -51,7 +51,7 @@ A function for computing the rolling and expanding principal component regressio
 n <- 15
 m <- 3
 x <- matrix(rnorm(n * m), nrow = n, ncol = m)
-y <- matrix(rnorm(n), nrow = n, ncol = 1)
+y <- rnorm(n)
 weights <- 0.9 ^ (n:1)
 
 # rolling regressions with complete windows

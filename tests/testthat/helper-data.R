@@ -8,6 +8,8 @@ dates <- rev(seq(Sys.Date(), length.out = n_obs, by = "-1 day"))
 # test arguments
 test_width <- c(1, 5, 10, 15)
 test_comps <- c(1, 2, 3)
+test_center <- c(TRUE, FALSE)
+test_scale <- c(TRUE, FALSE)
 test_min_obs <- 1
 
 # test data
@@ -21,3 +23,5 @@ if (requireNamespace("zoo", quietly = TRUE)) {
 }
 
 test_ls[[1]] <- setNames(test_ls[[1]], paste0("x", rep(1:n_vars)))
+
+# colnames(test_ls[[1]]) <- paste0("x", rep(1:n_vars))
