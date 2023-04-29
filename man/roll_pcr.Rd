@@ -5,7 +5,7 @@
 \title{Rolling Principal Component Regressions}
 \usage{
 roll_pcr(x, y, width, n_comps = ncol(x), weights = rep(1, width),
-  intercept = TRUE, center = FALSE, scale = FALSE, min_obs = width,
+  intercept = TRUE, center = TRUE, scale = FALSE, min_obs = width,
   complete_obs = TRUE, na_restore = FALSE, online = TRUE)
 }
 \arguments{

@@ -98,7 +98,7 @@ roll_eigen <- function(x, width, weights = rep(1, width), center = TRUE, scale =
 ##' roll_pcr(x, y, width = n, n_comps = 1, min_obs = 1, weights = weights)
 ##' @export
 roll_pcr <- function(x, y, width, n_comps = ncol(x), weights = rep(1, width),
-                     intercept = TRUE, center = FALSE, scale = FALSE,
+                     intercept = TRUE, center = TRUE, scale = FALSE,
                      min_obs = width, complete_obs = TRUE, na_restore = FALSE,
                      online = TRUE) {
   return(.Call(`_rollpca_roll_pcr`,

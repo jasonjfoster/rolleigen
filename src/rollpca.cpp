@@ -354,6 +354,16 @@ List roll_pcr_z(const NumericMatrix& x, const NumericVector& y,
     warning("'intercept = FALSE' is not supported");
   }
   
+  // check 'center' argument for errors
+  if (!center) {
+    warning("'center = FALSE' is not supported");
+  }
+  
+  // check 'scale' argument for errors
+  if (scale) {
+    warning("'scale = TRUE' is not supported");
+  }
+  
   // default 'min_obs' argument is 'width',
   // otherwise check argument for errors
   check_min_obs(min_obs);

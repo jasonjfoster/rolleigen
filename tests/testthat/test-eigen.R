@@ -24,7 +24,7 @@ test_that("equivalent to base::eigen", {
           expect_equal(test_roll$values, test_rollapplyr$values,
                        check.attributes = FALSE)
           
-          expect_equal(abs(test_roll$vectors)[ , 1, ], abs(test_rollapplyr$vectors)[ , 1, ],
+          expect_equal(abs(test_roll$vectors[ , 1, ]), abs(test_rollapplyr$vectors[ , 1, ]),
                        check.attributes = FALSE)
           
         }
