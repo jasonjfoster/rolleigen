@@ -17,21 +17,27 @@ test_that("equivalent to pls::pcr", {
   test_data_x <- test_ls[[1]][ , 1:3]
   test_data_y <- test_ls[[1]][ , 4, drop = FALSE] # univariate 'y' for pls::pcr
   
-  # for (a in 1:(length(test_data_x))) {
+  # for (ax in 1:(length(test_data_x))) {
   for (b in 1:length(test_width)) {
     
     width <- test_width[b]     
     test_weights <- list(rep(1, width))
     
     for (c in 1:length(test_comps)) {
+      # for (ay in 1:(length(test_data_y))) {
       
       expect_equal(roll_pcr(test_data_x, test_data_y,
                             width, test_comps[c],
-                            test_weights[[1]], min_obs = test_min_obs[1]),
+                            test_weights[[1]], test_intercept[1],
+                            test_center[1], test_scale[2],
+                            test_min_obs[1]),
                    rollapplyr_pcr(test_data_x, test_data_y,
-                                  width, test_comps[c]),
+                                  width, test_comps[c],
+                                  test_intercept[1], test_center[1],
+                                  test_scale[2]),
                    check.attributes = FALSE)
       
+      # }
     }
     
   }

@@ -22,7 +22,7 @@ dimnames_lm_x <- function(dimnames, n_cols_x, intercept) {
   
 }
 
-rollapplyr_pcr <- function(x, y, width, n_comps) {
+rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
   
   # "could not find function 'mvrValstats'"
   require(pls)
@@ -30,7 +30,11 @@ rollapplyr_pcr <- function(x, y, width, n_comps) {
   if (is.matrix(y)) {
     
     n_rows_xy <- nrow(x)
-    n_cols_x <- ncol(x) + 1
+    n_cols_x <- ncol(x)
+    
+    if (intercept) {
+      n_cols_x <- n_cols_x + 1
+    }
     
     result <- list("coefficients" = matrix(as.numeric(NA), n_rows_xy, n_cols_x),
                    "r.squared" = matrix(as.numeric(NA), n_rows_xy, 1))
@@ -55,16 +59,33 @@ rollapplyr_pcr <- function(x, y, width, n_comps) {
       y_subset <- y[max(1, i - width + 1):i, , drop = FALSE]
       data <- as.data.frame(cbind(y_subset, x_subset))
       
-      fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = names(data)[1]), data = data),
-                      error = function(x) NA)
+      if (intercept) {
+        
+        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = names(data)[1]), data = data,
+                                 center = center, scale = scale),
+                        error = function(x) NA)
+        
+      } else {
+        
+        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".-1", response = names(data)[1]), data = data,
+                                 center = center, scale = scale),
+                        error = function(x) NA)
+        
+      }
+
       df_fit <- n_cols_x
       
       if (!all(is.na(fit)) & (i >= df_fit)) {
         
-        fit_coef <- coef(fit, ncomp = n_comps, intercept = TRUE)[ , , 1]
+        fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
         
         result[["coefficients"]][i, ] <- fit_coef
-        result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = TRUE)$val[ , , 2]
+        
+        if (intercept) {
+          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+        } else {
+          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+        }
         
       }
       
@@ -83,7 +104,7 @@ rollapplyr_pcr <- function(x, y, width, n_comps) {
     x_dimnames <- dimnames(x)
     y_dimnames <- dimnames(y)
     
-    attr(result[["coefficients"]], "dimnames") <- dimnames_lm_x(x_dimnames, n_cols_x, TRUE)
+    attr(result[["coefficients"]], "dimnames") <- dimnames_lm_x(x_dimnames, n_cols_x, intercept)
     if (length(x_dimnames) > 1) {
       attr(result[["r.squared"]], "dimnames") <- list(x_dimnames[[1]], "R-squared")
     } else {
@@ -119,8 +140,20 @@ rollapplyr_pcr <- function(x, y, width, n_comps) {
       y_subset <- y[max(1, i - width + 1):i]
       data <- as.data.frame(cbind(y_subset, x_subset))
       
-      fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = names(data)[1]), data = data),
-                      error = function(x) NA)
+      if (intercept) {
+        
+        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = names(data)[1]), data = data,
+                                 center = center, scale = scale),
+                        error = function(x) NA)
+        
+      } else {
+        
+        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".-1", response = names(data)[1]), data = data,
+                                 center = center, scale = scale),
+                        error = function(x) NA)
+        
+      }
+
       df_fit <- n_cols_x
       
       summary_fit <- summary(fit)
@@ -128,10 +161,15 @@ rollapplyr_pcr <- function(x, y, width, n_comps) {
       
       if (!all(is.na(fit)) & (i >= df_fit)) {
         
-        fit_coef <- coef(fit, ncomp = n_comps, intercept = TRUE)[ , , 1]
+        fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
         
         result[["coefficients"]][i, ] <- fit_coef
-        result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = TRUE)$val[ , , 2]
+        
+        if (intercept) {
+          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+        } else {
+          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+        }
         
       }
       
