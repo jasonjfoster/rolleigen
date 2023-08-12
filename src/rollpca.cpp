@@ -268,49 +268,98 @@ arma::cube roll_cov_z(const NumericMatrix& x, const int& width,
 }
 
 // [[Rcpp::export(.roll_eigen)]]
-List roll_eigen(const NumericMatrix& x, const int& width,
+List roll_eigen(const SEXP& x, const int& width,
                 const arma::vec& weights, const bool& center,
                 const bool& scale, const int& min_obs,
                 const bool& complete_obs, const bool& na_restore,
                 const bool& online) {
   
-  int n_rows = x.nrow();  
-  int n_cols = x.ncol();
-  arma::cube arma_cov = roll_cov_z(x, width, weights, center, scale, min_obs, complete_obs, 
-                                   na_restore, online);
-  arma::mat arma_eigen_values(n_rows, n_cols);
-  arma::cube arma_eigen_vectors(n_cols, n_cols, n_rows);
-  
-  // compute rolling eigenvalues and eigenvectors
-  rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
-                                             arma_eigen_values, arma_eigen_vectors);
-  parallelFor(0, n_rows, roll_eigen_slices);
-  
-  // create and return a matrix or xts object for eigenvalues
-  NumericMatrix eigen_values(wrap(arma_eigen_values));
-  List dimnames = x.attr("dimnames");
-  if (dimnames.size() > 1) {
-    eigen_values.attr("dimnames") = List::create(dimnames[0], R_NilValue);
+  if (Rf_isMatrix(x)) {
+    
+    NumericMatrix xx(x);
+    int n_rows = xx.nrow();
+    int n_cols = xx.ncol();
+    
+    arma::cube arma_cov = roll_cov_z(xx, width, weights, center, scale, min_obs, complete_obs,
+                                     na_restore, online);
+    arma::mat arma_eigen_values(n_rows, n_cols);
+    arma::cube arma_eigen_vectors(n_cols, n_cols, n_rows);
+    
+    // compute rolling eigenvalues and eigenvectors
+    rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
+                                               arma_eigen_values, arma_eigen_vectors);
+    parallelFor(0, n_rows, roll_eigen_slices);
+    
+    // create and return a matrix or xts object for eigenvalues
+    NumericMatrix eigen_values(wrap(arma_eigen_values));
+    List dimnames = xx.attr("dimnames");
+    if (dimnames.size() > 1) {
+      eigen_values.attr("dimnames") = List::create(dimnames[0], R_NilValue);
+    }
+    eigen_values.attr("index") = xx.attr("index");
+    eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
+    eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");
+    eigen_values.attr("tclass") = xx.attr("tclass");
+    eigen_values.attr("tzone") = xx.attr("tzone");
+    eigen_values.attr("class") = xx.attr("class");
+    
+    // create and return a cube for eigenvectors
+    NumericVector eigen_vectors(wrap(arma_eigen_vectors));
+    eigen_vectors.attr("dim") = IntegerVector::create(n_cols, n_cols, n_rows);
+    if (dimnames.size() > 1) {
+      eigen_vectors.attr("dimnames") = List::create(dimnames[1], R_NilValue);
+    }
+    
+    // create and return a list
+    List result = List::create(Named("values") = eigen_values,
+                               Named("vectors") = eigen_vectors);
+    
+    return result;
+    
+  } else {
+    
+    NumericVector xx(x);
+    NumericMatrix xxx(xx.size(), 1, xx.begin());
+    int n_rows = xxx.nrow();
+    int n_cols = xxx.ncol();
+    
+    arma::cube arma_cov = roll_cov_z(xxx, width, weights, center, scale, min_obs, complete_obs,
+                                     na_restore, online);
+    arma::mat arma_eigen_values(n_rows, n_cols);
+    arma::cube arma_eigen_vectors(n_cols, n_cols, n_rows);
+    
+    // compute rolling eigenvalues and eigenvectors
+    rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
+                                               arma_eigen_values, arma_eigen_vectors);
+    parallelFor(0, n_rows, roll_eigen_slices);
+    
+    // create and return a matrix or xts object for eigenvalues
+    NumericMatrix eigen_values(wrap(arma_eigen_values));
+    List dimnames = xx.attr("dimnames");
+    if (dimnames.size() > 1) {
+      eigen_values.attr("dimnames") = List::create(dimnames[0], R_NilValue);
+    }
+    eigen_values.attr("index") = xx.attr("index");
+    eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
+    eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");
+    eigen_values.attr("tclass") = xx.attr("tclass");
+    eigen_values.attr("tzone") = xx.attr("tzone");
+    eigen_values.attr("class") = xx.attr("class");
+    
+    // create and return a cube for eigenvectors
+    NumericVector eigen_vectors(wrap(arma_eigen_vectors));
+    eigen_vectors.attr("dim") = IntegerVector::create(n_cols, n_cols, n_rows);
+    if (dimnames.size() > 1) {
+      eigen_vectors.attr("dimnames") = List::create(dimnames[1], R_NilValue);
+    }
+    
+    // create and return a list
+    List result = List::create(Named("values") = eigen_values,
+                               Named("vectors") = eigen_vectors);
+    
+    return result;
+    
   }
-  eigen_values.attr("index") = x.attr("index");
-  eigen_values.attr(".indexCLASS") = x.attr(".indexCLASS");
-  eigen_values.attr(".indexTZ") = x.attr(".indexTZ");
-  eigen_values.attr("tclass") = x.attr("tclass");
-  eigen_values.attr("tzone") = x.attr("tzone");
-  eigen_values.attr("class") = x.attr("class");
-  
-  // create and return a cube for eigenvectors
-  NumericVector eigen_vectors(wrap(arma_eigen_vectors));
-  eigen_vectors.attr("dim") = IntegerVector::create(n_cols, n_cols, n_rows);
-  if (dimnames.size() > 1) {
-    eigen_vectors.attr("dimnames") = List::create(dimnames[1], R_NilValue);
-  }
-  
-  // create and return a list
-  List result = List::create(Named("values") = eigen_values,
-                             Named("vectors") = eigen_vectors);
-  
-  return result;
   
 }
 
