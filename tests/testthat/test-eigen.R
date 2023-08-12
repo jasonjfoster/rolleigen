@@ -6,7 +6,10 @@ test_that("equivalent to base::eigen", {
     skip("zoo package required for this test")
   }
   
-  for (a in 1:(length(test_ls))) {
+  # test data
+  test_zoo <- c(test_ls, list("random vector with 0's" = test_ls[[1]][ , 1]))
+  
+  for (a in 1:(length(test_zoo))) {
     for (b in 1:length(test_width)) {
       
       width <- test_width[b]     
@@ -15,10 +18,10 @@ test_that("equivalent to base::eigen", {
       for (c in 1:length(test_center)) {
         for (d in 1:length(test_scale)) {
           
-          test_roll <- roll_eigen(test_ls[[a]], width,
+          test_roll <- roll_eigen(test_zoo[[a]], width,
                                   test_weights[[1]], test_center[c],
                                   test_scale[d], test_min_obs[1])
-          test_rollapplyr <- rollapplyr_eigen(test_ls[[a]], width,
+          test_rollapplyr <- rollapplyr_eigen(test_zoo[[a]], width,
                                               test_center[c], test_scale[d])
           
           expect_equal(test_roll$values, test_rollapplyr$values,

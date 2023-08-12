@@ -35,10 +35,15 @@ rollapplyr_cube <- function(f, x, width, ...) {
 
 rollapplyr_eigen <- function(x, width, center, scale) {
   
-  n_rows_x <- nrow(x)
-  n_cols_x <- ncol(x)
-  result <- list("values" = matrix(as.numeric(NA), n_rows_x, n_cols_x),
-                 "vectors" = array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x)))
+  if (!is.matrix(x)) {
+    
+    temp_attr <- attributes(x)
+    x <- as.matrix(zoo::coredata(x))
+    attr(x, "dimnames") <- NULL
+    attr(x, "index") <- temp_attr[["index"]]
+    attr(x, "class") <- temp_attr[["class"]]
+    
+  }
   
   if (zoo::is.zoo(x)) {
     
@@ -47,6 +52,11 @@ rollapplyr_eigen <- function(x, width, center, scale) {
     x_attr[["dimnames"]] <- NULL
     
   }
+  
+  n_rows_x <- nrow(x)
+  n_cols_x <- ncol(x)
+  result <- list("values" = matrix(as.numeric(NA), n_rows_x, n_cols_x),
+                 "vectors" = array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x)))
     
   if (scale) {
     cov <- rollapplyr_cube(cov.wt_cor, x, width, center = center)
