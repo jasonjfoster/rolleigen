@@ -2,7 +2,7 @@
 ##'
 ##' A function for computing the rolling and expanding eigenvalues and eigenvectors of time-series data.
 ##' 
-##' @param x matrix. Rows are observations and columns are variables.
+##' @param x vector or matrix. Rows are observations and columns are variables.
 ##' @param width integer. Window size.
 ##' @param weights vector. Weights for each observation within a window.
 ##' @param center logical. If \code{TRUE} then the weighted mean of each variable is used,

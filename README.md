@@ -18,7 +18,6 @@ devtools::install_github("jjf234/rollpca") # roll (>= 1.1.7)
 Load the package and supply a dataset:
 
 ``` r
-library(roll)
 library(rollpca)
 
 n <- 15
