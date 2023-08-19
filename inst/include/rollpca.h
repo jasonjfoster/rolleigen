@@ -97,14 +97,14 @@ struct RollPcrInterceptTRUE : public Worker {
   const arma::mat arma_mean;
   const arma::cube arma_eigen_vectors;
   arma::mat& arma_coef;                 // destination (pass by reference)
-  arma::mat& arma_rsq;
+  arma::vec& arma_rsq;
   
   // initialize with source and destination
   RollPcrInterceptTRUE(const arma::cube arma_cov, const int n_rows_xy,
                        const int n_cols_x, const arma::uvec arma_cols,
                        const arma::uvec arma_comps, const arma::vec arma_n_obs,
                        const arma::mat arma_mean, const arma::cube arma_eigen_vectors,
-                       arma::mat& arma_coef, arma::mat& arma_rsq)
+                       arma::mat& arma_coef, arma::vec& arma_rsq)
     : arma_cov(arma_cov), n_rows_xy(n_rows_xy),
       n_cols_x(n_cols_x), arma_cols(arma_cols),
       arma_comps(arma_comps), arma_n_obs(arma_n_obs),

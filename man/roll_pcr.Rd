@@ -9,7 +9,7 @@ roll_pcr(x, y, width, n_comps = ncol(x), weights = rep(1, width),
   complete_obs = TRUE, na_restore = FALSE, online = TRUE)
 }
 \arguments{
-\item{x}{matrix. Rows are observations and columns are the independent variables.}
+\item{x}{vector or matrix Rows are observations and columns are the independent variables.}
 
 \item{y}{vector or matrix. Rows are observations and columns are the dependent variables.}
 
