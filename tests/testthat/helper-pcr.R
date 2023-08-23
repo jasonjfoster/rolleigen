@@ -27,7 +27,27 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
   # "could not find function 'mvrValstats'"
   require(pls)
   
-  if (is.matrix(y)) {
+  if (is.matrix(x) || is.matrix(y) || intercept) {
+    
+    if (!is.matrix(x)) {
+      
+      temp_attr <- attributes(x)
+      x <- as.matrix(zoo::coredata(x))
+      attr(x, "dimnames") <- NULL
+      attr(x, "index") <- temp_attr[["index"]]
+      attr(x, "class") <- temp_attr[["class"]]
+      
+    }
+    
+    if (!is.matrix(y)) {
+      
+      temp_attr <- attributes(y)
+      y <- as.matrix(zoo::coredata(y))
+      attr(y, "dimnames") <- NULL
+      attr(y, "index") <- temp_attr[["index"]]
+      attr(y, "class") <- temp_attr[["class"]]
+      
+    }
     
     n_rows_xy <- nrow(x)
     n_cols_x <- ncol(x)
@@ -61,13 +81,14 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
       
       if (intercept) {
         
-        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = names(data)[1]), data = data,
+        # "Unparseable 'response'; use is deprecated.  Use as.name(.) or `..`!"
+        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = as.name(names(data)[1])), data = data,
                                  center = center, scale = scale),
                         error = function(x) NA)
         
       } else {
         
-        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".-1", response = names(data)[1]), data = data,
+        fit <- tryCatch(pls::pcr(reformulate(termlabels = ".-1", response = as.name(names(data)[1])), data = data,
                                  center = center, scale = scale),
                         error = function(x) NA)
         
