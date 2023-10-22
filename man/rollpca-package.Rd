@@ -1,16 +1,16 @@
-\name{rollpca-package}
-\alias{rollpca-package}
-\alias{rollpca}
+\name{rolleigen-package}
+\alias{rolleigen-package}
+\alias{rolleigen}
 \docType{package}
 \title{
-  \packageTitle{rollpca}
+  \packageTitle{rolleigen}
 }
 \description{
-  \packageDescription{rollpca}
+  \packageDescription{rolleigen}
 }
 \details{
-  \code{rollpca} is a package that provides fast and efficient computation of rolling and expanding principal component analysis for time-series data.
+  \code{rolleigen} is a package that provides fast and efficient computation of rolling and expanding eigenvalues and eigenvectors for time-series data.
 }
 \author{
- \packageAuthor{rollpca}
+ \packageAuthor{rolleigen}
 }

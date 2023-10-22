@@ -1,8 +1,8 @@
-# rollpca
+# rolleigen
 
 ## Overview
 
-`rollpca` is a package that provides analytical computation of rolling and expanding principal component analysis for time-series data.
+`rolleigen` is a package that provides analytical computation of rolling and expanding eigenvalues and eigenvectors for time-series data.
 
 ## Installation
 
@@ -18,7 +18,7 @@ devtools::install_github("jjf234/rollpca") # roll (>= 1.1.7)
 Load the package and supply a dataset:
 
 ``` r
-library(rollpca)
+library(rolleigen)
 
 n <- 15
 m <- 3

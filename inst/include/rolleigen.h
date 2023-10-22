@@ -1,5 +1,5 @@
-#ifndef ROLLPCA_H
-#define ROLLPCA_H
+#ifndef ROLLEIGEN_H
+#define ROLLEIGEN_H
 
 #include <RcppArmadillo.h>
 #include <RcppParallel.h>
@@ -7,7 +7,7 @@
 using namespace Rcpp;
 using namespace RcppParallel;
 
-namespace rollpca {
+namespace rolleigen {
 
 // 'Worker' function for computing the rolling statistic using a standard algorithm
 struct RollEigenSlices : public Worker {

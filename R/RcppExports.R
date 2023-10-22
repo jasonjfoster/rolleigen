@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .roll_eigen <- function(x, width, weights, center, scale, min_obs, complete_obs, na_restore, online) {
-    .Call(`_rollpca_roll_eigen`, x, width, weights, center, scale, min_obs, complete_obs, na_restore, online)
+    .Call(`_rolleigen_roll_eigen`, x, width, weights, center, scale, min_obs, complete_obs, na_restore, online)
 }
 
 .roll_pcr <- function(x, y, width, n_comps, weights, intercept, center, scale, min_obs, complete_obs, na_restore, online) {
-    .Call(`_rollpca_roll_pcr`, x, y, width, n_comps, weights, intercept, center, scale, min_obs, complete_obs, na_restore, online)
+    .Call(`_rolleigen_roll_pcr`, x, y, width, n_comps, weights, intercept, center, scale, min_obs, complete_obs, na_restore, online)
 }
 

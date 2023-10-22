@@ -1,4 +1,4 @@
 library(testthat)
-library(rollpca)
+library(rolleigen)
 
-test_check("rollpca")
+test_check("rolleigen")

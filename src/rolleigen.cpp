@@ -1,4 +1,4 @@
-#include "rollpca.h"
+#include "rolleigen.h"
 
 void check_width(const int& width) {
   
@@ -286,8 +286,8 @@ List roll_eigen(const SEXP& x, const int& width,
     arma::cube arma_eigen_vectors(n_cols, n_cols, n_rows);
     
     // compute rolling eigenvalues and eigenvectors
-    rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
-                                               arma_eigen_values, arma_eigen_vectors);
+    rolleigen::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
+                                                 arma_eigen_values, arma_eigen_vectors);
     parallelFor(0, n_rows, roll_eigen_slices);
     
     // create and return a matrix or xts object for eigenvalues
@@ -329,8 +329,8 @@ List roll_eigen(const SEXP& x, const int& width,
     arma::cube arma_eigen_vectors(n_cols, n_cols, n_rows);
     
     // compute rolling eigenvalues and eigenvectors
-    rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
-                                               arma_eigen_values, arma_eigen_vectors);
+    rolleigen::RollEigenSlices roll_eigen_slices(arma_cov, n_rows, n_cols,
+                                                 arma_eigen_values, arma_eigen_vectors);
     parallelFor(0, n_rows, roll_eigen_slices);
     
     // create and return a matrix or xts object for eigenvalues
@@ -458,15 +458,15 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     }
     
     // compute rolling eigenvalues and eigenvectors
-    rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows_xy, n_cols_x - 1,
-                                               arma_eigen_values, arma_eigen_vectors);
+    rolleigen::RollEigenSlices roll_eigen_slices(arma_cov, n_rows_xy, n_cols_x - 1,
+                                                 arma_eigen_values, arma_eigen_vectors);
     parallelFor(0, n_rows_xy, roll_eigen_slices);
     
     // compute rolling principal component regressions
     arma::uvec arma_cols = seq(n_cols_x - 1);
-    rollpca::RollPcrInterceptTRUE roll_pcr_slices(arma_cov, n_rows_xy, n_cols_x, arma_cols, arma_comps,
-                                                  arma_n_obs, arma_mean, arma_eigen_vectors,
-                                                  arma_coef, arma_rsq);
+    rolleigen::RollPcrInterceptTRUE roll_pcr_slices(arma_cov, n_rows_xy, n_cols_x, arma_cols, arma_comps,
+                                                    arma_n_obs, arma_mean, arma_eigen_vectors,
+                                                    arma_coef, arma_rsq);
     parallelFor(0, n_rows_xy, roll_pcr_slices);
     
     // create and return a list
@@ -563,15 +563,15 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     }
     
     // compute rolling eigenvalues and eigenvectors
-    rollpca::RollEigenSlices roll_eigen_slices(arma_cov, n_rows_xy, n_cols_x - 1,
-                                               arma_eigen_values, arma_eigen_vectors);
+    rolleigen::RollEigenSlices roll_eigen_slices(arma_cov, n_rows_xy, n_cols_x - 1,
+                                                 arma_eigen_values, arma_eigen_vectors);
     parallelFor(0, n_rows_xy, roll_eigen_slices);
     
     // compute rolling principal component regressions
     arma::uvec arma_cols = seq(n_cols_x - 1);
-    rollpca::RollPcrInterceptTRUE roll_pcr_slices(arma_cov, n_rows_xy, n_cols_x, arma_cols, arma_comps,
-                                                  arma_n_obs, arma_mean, arma_eigen_vectors,
-                                                  arma_coef, arma_rsq);
+    rolleigen::RollPcrInterceptTRUE roll_pcr_slices(arma_cov, n_rows_xy, n_cols_x, arma_cols, arma_comps,
+                                                    arma_n_obs, arma_mean, arma_eigen_vectors,
+                                                    arma_coef, arma_rsq);
     parallelFor(0, n_rows_xy, roll_pcr_slices);
     
     // create and return a list

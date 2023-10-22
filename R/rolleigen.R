@@ -40,7 +40,7 @@
 roll_eigen <- function(x, width, weights = rep(1, width), center = TRUE, scale = FALSE,
                        min_obs = width, complete_obs = TRUE, na_restore = FALSE,
                        online = TRUE) {
-  return(.Call(`_rollpca_roll_eigen`,
+  return(.Call(`_rolleigen_roll_eigen`,
                x,
                as.integer(width),
                as.numeric(weights),
@@ -101,7 +101,7 @@ roll_pcr <- function(x, y, width, n_comps = ncol(x), weights = rep(1, width),
                      intercept = TRUE, center = TRUE, scale = FALSE,
                      min_obs = width, complete_obs = TRUE, na_restore = FALSE,
                      online = TRUE) {
-  return(.Call(`_rollpca_roll_pcr`,
+  return(.Call(`_rolleigen_roll_pcr`,
                x, y,
                as.integer(width),
                as.integer(n_comps),
