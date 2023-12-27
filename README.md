@@ -2,7 +2,7 @@
 
 ## Overview
 
-`rolleigen` is a package that provides analytical computation of rolling and expanding eigenvalues and eigenvectors for time-series data.
+`rolleigen` is a package that provides analytical computation of rolling and expanding eigenanalysis for time-series data.
 
 ## Installation
 
@@ -10,7 +10,7 @@ Install the development version from GitHub:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jjf234/rollpca") # roll (>= 1.1.7)
+devtools::install_github("jjf234/rolleigen") # roll (>= 1.1.7)
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ x <- matrix(rnorm(n * m), nrow = n, ncol = m)
 y <- rnorm(n)
 weights <- 0.9 ^ (n:1)
 ```
-Then, to compute rolling eigenvalues and eigenvectors, use the `roll_eigen` function:
+Then, to compute rolling and expanding eigenvalues and eigenvectors, use the `roll_eigen` function:
 
 ```r
 # rolling eigenvalues and eigenvectors with complete windows

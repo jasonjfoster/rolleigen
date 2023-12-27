@@ -9,7 +9,7 @@
   \packageDescription{rolleigen}
 }
 \details{
-  \code{rolleigen} is a package that provides fast and efficient computation of rolling and expanding eigenvalues and eigenvectors for time-series data.
+  \code{rolleigen} is a package that provides fast and efficient computation of rolling and expanding eigenanalysis for time-series data.
 }
 \author{
  \packageAuthor{rolleigen}
