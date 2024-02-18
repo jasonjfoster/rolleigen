@@ -436,23 +436,23 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
       
     }
     
-    // compute rolling covariances
+    // compute rolling crossproducts
     if (status && online) {
       
-      roll::RollCovOnlineMatLm roll_cov_online(data, n, n_rows_xy, n_cols_x, width,
-                                               weights, true, min_obs,
-                                               arma_any_na, na_restore,
-                                               arma_n_obs, arma_sum_w, arma_mean,
-                                               arma_cov);
+      roll::RollCrossProdOnlineMatXX roll_cov_online(data, n, n_rows_xy, n_cols_x, width,
+                                                     weights, true, false, min_obs,
+                                                     arma_any_na, na_restore,
+                                                     arma_n_obs, arma_sum_w, arma_mean,
+                                                     arma_cov);
       parallelFor(0, n_cols_x, roll_cov_online);
       
     } else {
       
-      roll::RollCovOfflineMatLm roll_cov_offline(data, n, n_rows_xy, n_cols_x, width,
-                                                 weights, true, min_obs,
-                                                 arma_any_na, na_restore,
-                                                 arma_n_obs, arma_sum_w, arma_mean,
-                                                 arma_cov);
+      roll::RollCrossProdOfflineMatXX roll_cov_offline(data, n, n_rows_xy, n_cols_x, width,
+                                                       weights, true, false, min_obs,
+                                                       arma_any_na, na_restore,
+                                                       arma_n_obs, arma_sum_w, arma_mean,
+                                                       arma_cov);
       parallelFor(0, n_rows_xy * n_cols_x * (n_cols_x + 1) / 2, roll_cov_offline);
       
     }
@@ -541,23 +541,23 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
       
     }
     
-    // compute rolling covariances
+    // compute rolling crossproducts
     if (status && online) {
       
-      roll::RollCovOnlineMatLm roll_cov_online(data, n, n_rows_xy, n_cols_x, width,
-                                               weights, true, min_obs,
-                                               arma_any_na, na_restore,
-                                               arma_n_obs, arma_sum_w, arma_mean,
-                                               arma_cov);
+      roll::RollCrossProdOnlineMatXX roll_cov_online(data, n, n_rows_xy, n_cols_x, width,
+                                                     weights, true, false, min_obs,
+                                                     arma_any_na, na_restore,
+                                                     arma_n_obs, arma_sum_w, arma_mean,
+                                                     arma_cov);
       parallelFor(0, n_cols_x, roll_cov_online);
       
     } else {
       
-      roll::RollCovOfflineMatLm roll_cov_offline(data, n, n_rows_xy, n_cols_x, width,
-                                                 weights, true, min_obs,
-                                                 arma_any_na, na_restore,
-                                                 arma_n_obs, arma_sum_w, arma_mean,
-                                                 arma_cov);
+      roll::RollCrossProdOfflineMatXX roll_cov_offline(data, n, n_rows_xy, n_cols_x, width,
+                                                       weights, true, false, min_obs,
+                                                       arma_any_na, na_restore,
+                                                       arma_n_obs, arma_sum_w, arma_mean,
+                                                       arma_cov);
       parallelFor(0, n_rows_xy * n_cols_x * (n_cols_x + 1) / 2, roll_cov_offline);
       
     }
