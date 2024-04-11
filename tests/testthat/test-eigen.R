@@ -20,7 +20,7 @@ test_that("equivalent to base::eigen", {
           
           test_roll <- roll_eigen(test_zoo[[a]], width,
                                   test_weights[[1]], test_center[c],
-                                  test_scale[d], FALSE,
+                                  test_scale[d], test_order[2],
                                   test_min_obs[1])
           test_rollapplyr <- rollapplyr_eigen(test_zoo[[a]], width,
                                               test_center[c], test_scale[d])

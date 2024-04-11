@@ -11,6 +11,7 @@ test_comps <- c(1, 2, 3)
 test_intercept <- c(TRUE, FALSE)
 test_center <- c(TRUE, FALSE)
 test_scale <- c(TRUE, FALSE)
+test_order <- c(TRUE, FALSE)
 test_min_obs <- 1
 
 # test data
