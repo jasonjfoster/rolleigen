@@ -8,11 +8,11 @@
  */
 
 /* .Call calls */
-extern SEXP _rolleigen_roll_eigen(void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern SEXP _rolleigen_roll_pcr(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern SEXP _rolleigen_roll_eigen(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _rolleigen_roll_pcr(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-  {"_rolleigen_roll_eigen", (DL_FUNC) &_rolleigen_roll_eigen,  9},
+  {"_rolleigen_roll_eigen", (DL_FUNC) &_rolleigen_roll_eigen, 10},
   {"_rolleigen_roll_pcr",   (DL_FUNC) &_rolleigen_roll_pcr,   12},
   {NULL, NULL, 0}
 };

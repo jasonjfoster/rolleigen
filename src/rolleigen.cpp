@@ -270,9 +270,9 @@ arma::cube roll_cov_z(const NumericMatrix& x, const int& width,
 // [[Rcpp::export(.roll_eigen)]]
 List roll_eigen(const SEXP& x, const int& width,
                 const arma::vec& weights, const bool& center,
-                const bool& scale, const int& min_obs,
-                const bool& complete_obs, const bool& na_restore,
-                const bool& online) {
+                const bool& scale, const bool& order,
+                const int& min_obs, const bool& complete_obs,
+                const bool& na_restore, const bool& online) {
   
   if (Rf_isMatrix(x)) {
     
@@ -290,12 +290,19 @@ List roll_eigen(const SEXP& x, const int& width,
                                                  arma_eigen_values, arma_eigen_vectors);
     parallelFor(0, n_rows, roll_eigen_slices);
     
+    if (order) {
+      
+      // order rolling eigenvalues and eigenvectors
+      rolleigen::RollOrderSlices roll_order_slices(n_rows, n_cols,
+                                                   arma_eigen_values, arma_eigen_vectors);
+      roll_order_slices(0, n_rows);
+      
+    }
+    
     // create and return a matrix or xts object for eigenvalues
     NumericMatrix eigen_values(wrap(arma_eigen_values));
     List dimnames = xx.attr("dimnames");
-    if (dimnames.size() > 1) {
-      eigen_values.attr("dimnames") = List::create(dimnames[0], R_NilValue);
-    }
+    eigen_values.attr("dimnames") = dimnames;
     eigen_values.attr("index") = xx.attr("index");
     eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
     eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");
@@ -333,12 +340,19 @@ List roll_eigen(const SEXP& x, const int& width,
                                                  arma_eigen_values, arma_eigen_vectors);
     parallelFor(0, n_rows, roll_eigen_slices);
     
+    if (order) {
+      
+      // order rolling eigenvalues and eigenvectors
+      rolleigen::RollOrderSlices roll_order_slices(n_rows, n_cols,
+                                                   arma_eigen_values, arma_eigen_vectors);
+      roll_order_slices(0, n_rows);
+      
+    }
+    
     // create and return a matrix or xts object for eigenvalues
     NumericMatrix eigen_values(wrap(arma_eigen_values));
     List dimnames = xx.attr("dimnames");
-    if (dimnames.size() > 1) {
-      eigen_values.attr("dimnames") = List::create(dimnames[0], R_NilValue);
-    }
+    eigen_values.attr("dimnames") = dimnames;
     eigen_values.attr("index") = xx.attr("index");
     eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
     eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");

@@ -9,6 +9,50 @@ using namespace RcppParallel;
 
 namespace rolleigen {
 
+struct RollOrderSlices {
+  
+  const int n_rows_x;
+  const int n_cols_x;
+  arma::mat& arma_eigen_values;
+  arma::cube& arma_eigen_vectors;
+  
+  RollOrderSlices(const int n_rows_x, const int n_cols_x,
+                  arma::mat& arma_eigen_values, arma::cube& arma_eigen_vectors)
+    : n_rows_x(n_rows_x), n_cols_x(n_cols_x),
+      arma_eigen_values(arma_eigen_values), arma_eigen_vectors(arma_eigen_vectors) { }
+  
+  void operator()(std::size_t begin_slice, std::size_t end_slice) {
+    for (std::size_t i = begin_slice; i < end_slice; i++) {
+      
+      arma::vec eigen_values = arma_eigen_values.row(i).t();
+      arma::mat eigen_vectors = arma_eigen_vectors.slice(i);
+      arma::mat eigen_vectors0 = arma_eigen_vectors.slice(std::max(0, (int)i - 1));
+      
+      // check if missing value is present
+      bool any_na = eigen_vectors.has_nan();
+      bool any_na0 = eigen_vectors0.has_nan();
+      
+      // don't compute if missing value 
+      if (!any_na && !any_na0 && (i > 0)) {
+        
+        arma::mat similarity = eigen_vectors.t() * eigen_vectors0;
+        arma::uvec order = arma::index_max(arma::abs(similarity), 1);
+        
+        eigen_vectors = eigen_vectors.cols(order);
+        similarity = similarity.cols(order);
+        
+        arma::vec signs = arma::sign(similarity.diag());
+        
+        arma_eigen_values.row(i) = eigen_values(order).t();
+        arma_eigen_vectors.slice(i) = signs.t() % eigen_vectors.each_row();
+      
+      }
+      
+    }
+  }
+  
+};
+
 // 'Worker' function for computing the rolling statistic using a standard algorithm
 struct RollEigenSlices : public Worker {
   

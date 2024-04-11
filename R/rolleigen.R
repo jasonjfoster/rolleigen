@@ -9,6 +9,7 @@
 ##' if \code{FALSE} then zero is used.
 ##' @param scale logical. If \code{TRUE} then the weighted standard deviation of each variable is used,
 ##' if \code{FALSE} then no scaling is done.
+##' @param order logical. Change sign and order of the components.
 ##' @param min_obs integer. Minimum number of observations required to have a value within a window,
 ##' otherwise result is \code{NA}.
 ##' @param complete_obs	logical. If \code{TRUE} then rows containing any missing values are removed,
@@ -37,7 +38,8 @@
 ##' # expanding eigenvalues and eigenvectors with partial windows and weights
 ##' roll_eigen(x, width = n, min_obs = 1, weights = weights)
 ##' @export
-roll_eigen <- function(x, width, weights = rep(1, width), center = TRUE, scale = FALSE,
+roll_eigen <- function(x, width, weights = rep(1, width),
+                       center = TRUE, scale = FALSE, order = TRUE,
                        min_obs = width, complete_obs = TRUE, na_restore = FALSE,
                        online = TRUE) {
   return(.Call(`_rolleigen_roll_eigen`,
@@ -46,6 +48,7 @@ roll_eigen <- function(x, width, weights = rep(1, width), center = TRUE, scale =
                as.numeric(weights),
                as.logical(center),
                as.logical(scale),
+               as.logical(order),
                as.integer(min_obs),
                as.logical(complete_obs),
                as.logical(na_restore),

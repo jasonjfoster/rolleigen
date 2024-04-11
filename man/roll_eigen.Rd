@@ -5,7 +5,7 @@
 \title{Rolling Eigenvalues and Eigenvectors}
 \usage{
 roll_eigen(x, width, weights = rep(1, width), center = TRUE,
-  scale = FALSE, min_obs = width, complete_obs = TRUE,
+  scale = FALSE, order = TRUE, min_obs = width, complete_obs = TRUE,
   na_restore = FALSE, online = TRUE)
 }
 \arguments{
@@ -20,6 +20,8 @@ if \code{FALSE} then zero is used.}
 
 \item{scale}{logical. If \code{TRUE} then the weighted standard deviation of each variable is used,
 if \code{FALSE} then no scaling is done.}
+
+\item{order}{logical. Change sign and order of the components.}
 
 \item{min_obs}{integer. Minimum number of observations required to have a value within a window,
 otherwise result is \code{NA}.}

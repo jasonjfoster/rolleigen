@@ -1,18 +1,18 @@
 Package: rolleigen
 Type: Package
-Title: Rolling Eigenvalues and Eigenvectors
+Title: Rolling Eigenanalysis
 Version: 1.0
 Date: YYYY-MM-DD
 Author: Jason Foster
 Maintainer: Jason Foster <jason.j.foster@gmail.com>
 Description: Fast and efficient computation of rolling and expanding eigenanalysis for time-series data.
 License: GPL (>= 2)
-URL: https://github.com/jasonjfoster/rollpca
-BugReports: https://github.com/jasonjfoster/rollpca/issues
+URL: https://github.com/jasonjfoster/rolleigen
+BugReports: https://github.com/jasonjfoster/rolleigen/issues
 Imports: Rcpp, RcppParallel
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel, roll (>= 1.1.7)
 SystemRequirements: GNU make
 Roxygen: list(old_usage = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Encoding: UTF-8
 Suggests: covr, testthat, zoo, pls, roll
