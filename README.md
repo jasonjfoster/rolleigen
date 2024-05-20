@@ -1,5 +1,8 @@
 # rolleigen
 
+[![](https://github.com/jasonjfoster/rolleigen/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jasonjfoster/rolleigen/actions/workflows/check-standard.yaml)
+[![](https://codecov.io/gh/jasonjfoster/rolleigen/graph/badge.svg)](https://app.codecov.io/github/jasonjfoster/rolleigen)
+
 ## Overview
 
 `rolleigen` is a package that provides analytical computation of rolling and expanding eigenanalysis for time-series data.
