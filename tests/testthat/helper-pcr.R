@@ -22,10 +22,49 @@ dimnames_lm_x <- function(dimnames, n_cols_x, intercept) {
   
 }
 
+R2.mvr <- function (object, estimate, newdata, ncomp = 1:object$ncomp, 
+                    comps, intercept = cumulative, se = FALSE, ...) 
+{
+  cumulative <- missing(comps) || is.null(comps)
+  allEstimates <- c("all", "train", "CV", "test")
+  if (missing(estimate)) {
+    if (!missing(newdata)) {
+      estimate = "test"
+    }
+    else {
+      if (!is.null(object$validation)) {
+        estimate = "CV"
+      }
+      else {
+        estimate = "train"
+      }
+    }
+  }
+  else {
+    estimate <- allEstimates[pmatch(estimate, allEstimates)]
+    if (any(is.na(estimate))) 
+      stop("`estimate' should be a subset of ", paste(allEstimates, 
+                                                      collapse = ", "))
+    if (any(estimate == "all")) {
+      estimate <- allEstimates[-1]
+      if (missing(newdata)) 
+        estimate <- setdiff(estimate, "test")
+      if (is.null(object$validation) || !cumulative) 
+        estimate <- setdiff(estimate, "CV")
+    }
+  }
+  cl <- match.call(expand.dots = FALSE)
+  cl$estimate <- estimate
+  # cl[[1]] <- as.name("mvrValstats")
+  cl[[1]] <- pls:::mvrValstats  # "could not find function 'mvrValstats'"
+  valstats <- eval(cl, parent.frame())
+  R2 <- 1 - valstats$SSE/c(valstats$SST)
+  return(structure(list(val = R2, type = "R2", comps = valstats$comps, 
+                        cumulative = valstats$cumulative, call = match.call()), 
+                   class = "mvrVal"))
+}
+
 rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
-  
-  # "could not find function 'mvrValstats'"
-  require(pls)
   
   if (is.matrix(x) || is.matrix(y) || intercept) {
     
@@ -103,9 +142,9 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
         result[["coefficients"]][i, ] <- fit_coef
         
         if (intercept) {
-          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
         } else {
-          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
         }
         
       }
@@ -187,9 +226,9 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
         result[["coefficients"]][i, ] <- fit_coef
         
         if (intercept) {
-          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
         } else {
-          result[["r.squared"]][i, ] <- pls:::R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
         }
         
       }
