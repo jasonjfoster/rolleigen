@@ -9,7 +9,7 @@ roll_pcr(x, y, width, n_comps = ncol(x), weights = rep(1, width),
   complete_obs = TRUE, na_restore = FALSE, online = TRUE)
 }
 \arguments{
-\item{x}{vector or matrix Rows are observations and columns are the independent variables.}
+\item{x}{vector or matrix. Rows are observations and columns are the independent variables.}
 
 \item{y}{vector or matrix. Rows are observations and columns are the dependent variables.}
 
@@ -49,8 +49,7 @@ A function for computing the rolling and expanding principal component regressio
 }
 \examples{
 n <- 15
-m <- 3
-x <- matrix(rnorm(n * m), nrow = n, ncol = m)
+x <- rnorm(n)
 y <- rnorm(n)
 weights <- 0.9 ^ (n:1)
 

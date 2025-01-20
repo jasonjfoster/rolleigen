@@ -60,7 +60,7 @@ roll_eigen <- function(x, width, weights = rep(1, width),
 ##'
 ##' A function for computing the rolling and expanding principal component regressions of time-series data.
 ##' 
-##' @param x vector or matrix Rows are observations and columns are the independent variables.
+##' @param x vector or matrix. Rows are observations and columns are the independent variables.
 ##' @param y vector or matrix. Rows are observations and columns are the dependent variables.
 ##' @param width integer. Window size.
 ##' @param n_comps integer. Number of principal components.
@@ -83,8 +83,7 @@ roll_eigen <- function(x, width, weights = rep(1, width),
 ##' An object is the same class as \code{x}.}
 ##' @examples
 ##' n <- 15
-##' m <- 3
-##' x <- matrix(rnorm(n * m), nrow = n, ncol = m)
+##' x <- rnorm(n)
 ##' y <- rnorm(n)
 ##' weights <- 0.9 ^ (n:1)
 ##' 
