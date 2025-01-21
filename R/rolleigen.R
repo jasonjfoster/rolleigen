@@ -83,7 +83,8 @@ roll_eigen <- function(x, width, weights = rep(1, width),
 ##' An object is the same class as \code{x}.}
 ##' @examples
 ##' n <- 15
-##' x <- rnorm(n)
+##' m <- 3
+##' x <- matrix(rnorm(n * m), nrow = n, ncol = m)
 ##' y <- rnorm(n)
 ##' weights <- 0.9 ^ (n:1)
 ##' 

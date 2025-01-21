@@ -24,7 +24,8 @@ Load the package and supply a dataset:
 library(rolleigen)
 
 n <- 15
-x <- rnorm(n)
+m <- 3
+x <- matrix(rnorm(n * m), nrow = n, ncol = m)
 y <- rnorm(n)
 weights <- 0.9 ^ (n:1)
 ```

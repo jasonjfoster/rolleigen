@@ -49,7 +49,8 @@ A function for computing the rolling and expanding principal component regressio
 }
 \examples{
 n <- 15
-x <- rnorm(n)
+m <- 3
+x <- matrix(rnorm(n * m), nrow = n, ncol = m)
 y <- rnorm(n)
 weights <- 0.9 ^ (n:1)
 
