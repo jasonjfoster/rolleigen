@@ -13,7 +13,7 @@ Install the development version from GitHub:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jasonjfoster/rolleigen") # roll (>= 1.1.7)
+devtools::install_github("jasonjfoster/rolleigen")
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ devtools::install_github("jasonjfoster/rolleigen") # roll (>= 1.1.7)
 Load the package and supply a dataset:
 
 ``` r
-library(rolleigen)
+library(rolleigen) # roll (>= 1.1.7)
 
 n <- 15
 m <- 3
