@@ -5,7 +5,7 @@
 
 ## Overview
 
-`rolleigen` is a package that provides analytical computation of rolling and expanding eigenanalysis for time-series data.
+`rolleigen` is a package that provides fast and efficient computation of rolling and expanding eigenanalysis for time-series data.
 
 ## Installation
 
