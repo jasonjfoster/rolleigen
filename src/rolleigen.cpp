@@ -103,6 +103,21 @@ void check_lm(const int& n_rows_x, const int& n_rows_y) {
   
 }
 
+List dimnames_eigen(const int& n_cols) {
+  
+  CharacterVector result(n_cols);
+  
+  for (int i = 0; i < n_cols; i++) {
+    
+    result[i] = "pc";
+    result[i] += i + 1;
+    
+  }
+  
+  return List::create(R_NilValue, result);
+  
+}
+
 List dimnames_lm_x(const List& input, const int& n_cols_x,
                    const bool& intercept) {
   
@@ -302,7 +317,7 @@ List roll_eigen(const SEXP& x, const int& width,
     // create and return a matrix or xts object for eigenvalues
     NumericMatrix eigen_values(wrap(arma_eigen_values));
     List dimnames = xx.attr("dimnames");
-    eigen_values.attr("dimnames") = dimnames;
+    eigen_values.attr("dimnames") = dimnames_eigen(n_cols);
     eigen_values.attr("index") = xx.attr("index");
     eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
     eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");
