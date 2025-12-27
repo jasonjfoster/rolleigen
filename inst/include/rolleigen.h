@@ -158,7 +158,8 @@ struct RollPcrInterceptTRUE : public Worker {
   // function call operator that iterates by slice
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
-      
+
+      arma::rowvec no_solution(n_cols_x, arma::fill::value(NA_REAL));
       arma::mat sigma = arma_cov.slice(i);
       arma::mat A = sigma.submat(0, 0, n_cols_x - 2, n_cols_x - 2);
       arma::mat b = sigma.submat(0, n_cols_x - 1, n_cols_x - 2, n_cols_x - 1);
@@ -183,38 +184,30 @@ struct RollPcrInterceptTRUE : public Worker {
           // coefficients
           arma::vec gamma_subset = gamma(arma_comps - 1);
           arma::vec coef = eigen_vectors.submat(arma_cols, arma_comps - 1) * gamma_subset;
-          arma::mat trans_coef = trans(coef);
-          arma_coef.submat(i, 1, i, n_cols_x - 1) = trans_coef;
+          arma_coef.submat(i, 1, i, n_cols_x - 1) = trans(coef);
           
           // intercept
           arma::mat mean_x = arma_mean.submat(i, 0, i, n_cols_x - 2);
-          arma_coef(i, 0) = arma_mean(i, n_cols_x - 1) -
-            as_scalar(mean_x * coef);
+          arma_coef(i, 0) = arma_mean(i, n_cols_x - 1) - arma::dot(mean_x, coef);
           
           // r-squared
           long double var_y = sigma(n_cols_x - 1, n_cols_x - 1);
-          if ((var_y < 0) || (sqrt(var_y) <= sqrt(arma::datum::eps))) {      
-            arma_rsq[i] = NA_REAL;
+          if (var_y > arma::datum::eps) {    
+            arma_rsq[i] = arma::dot(coef, A * coef) / var_y;
           } else {
-            arma_rsq[i] = as_scalar(trans_coef * A * coef) / var_y;
+            arma_rsq[i] = NA_REAL;
           }
           
         } else {
           
-          arma::vec no_solution(n_cols_x);
-          no_solution.fill(NA_REAL);
-          
-          arma_coef.row(i) = trans(no_solution);
+          arma_coef.row(i) = no_solution;
           arma_rsq[i] = NA_REAL;
           
         }
         
       } else {
-        
-        arma::vec no_solution(n_cols_x);
-        no_solution.fill(NA_REAL);
-        
-        arma_coef.row(i) = trans(no_solution);
+
+        arma_coef.row(i) = no_solution;
         arma_rsq[i] = NA_REAL;
         
       }

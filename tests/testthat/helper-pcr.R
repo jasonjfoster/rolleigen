@@ -136,7 +136,7 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
 
       df_fit <- n_cols_x
       
-      if (!all(is.na(fit)) & (i >= df_fit)) {
+      if (!all(is.na(fit)) & (i >= df_fit)) { # REVIEW WITH ROLLSHAP
         
         fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
         
@@ -222,7 +222,7 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
       summary_fit <- summary(fit)
       summary_fit_coef <- coef(summary_fit)[ , "Estimate"]
       
-      if (!all(is.na(fit)) & (i >= df_fit)) {
+      if (!all(is.na(fit)) & (i >= df_fit)) { # REVIEW WITH ROLLSHAP
         
         fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
         
