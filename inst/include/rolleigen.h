@@ -1,6 +1,8 @@
 #ifndef ROLLEIGEN_H
 #define ROLLEIGEN_H
 
+#define ARMA_WARN_LEVEL 0
+
 #include <RcppArmadillo.h>
 #include <RcppParallel.h>
 #include <roll.h>
@@ -9,7 +11,8 @@ using namespace RcppParallel;
 
 namespace rolleigen {
 
-struct RollOrderSlices {
+// 'Worker' function for computing the rolling statistic using a standard algorithm
+struct RollOrderSlices : public Worker {
   
   const int n_rows_x;
   const int n_cols_x;
@@ -24,28 +27,32 @@ struct RollOrderSlices {
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
-      arma::vec eigen_values = arma_eigen_values.row(i).t();
-      arma::mat eigen_vectors = arma_eigen_vectors.slice(i);
-      arma::mat eigen_vectors0 = arma_eigen_vectors.slice(std::max(0, (int)i - 1));
-      
-      // check if missing value is present
-      bool any_na = eigen_vectors.has_nan();
-      bool any_na0 = eigen_vectors0.has_nan();
-      
-      // don't compute if missing value 
-      if (!any_na && !any_na0 && (i > 0)) {
+      if (i > 0) {
+
+        arma::vec eigen_values = trans(arma_eigen_values.row(i));
+        arma::mat eigen_vectors = arma_eigen_vectors.slice(i);
+        arma::mat eigen_vectors0 = arma_eigen_vectors.slice(i - 1);
         
-        arma::mat similarity = eigen_vectors.t() * eigen_vectors0;
-        arma::uvec order = arma::index_max(arma::abs(similarity), 1);
+        // check if missing value is present
+        bool any_na = eigen_vectors.has_nan();
+        bool any_na0 = eigen_vectors0.has_nan();
         
-        eigen_vectors = eigen_vectors.cols(order);
-        similarity = similarity.cols(order);
+        // don't compute if missing value 
+        if (!any_na && !any_na0) {
+          
+          arma::mat similarity = trans(eigen_vectors) * eigen_vectors0;
+          arma::uvec order = arma::index_max(arma::abs(similarity), 1);
+          
+          eigen_vectors = eigen_vectors.cols(order);
+          similarity = similarity.cols(order);
+          
+          arma::vec signs = arma::sign(similarity.diag());
+          
+          arma_eigen_values.row(i) = trans(eigen_values(order));
+          arma_eigen_vectors.slice(i) = eigen_vectors.each_col() % signs;
         
-        arma::vec signs = arma::sign(similarity.diag());
-        
-        arma_eigen_values.row(i) = eigen_values(order).t();
-        arma_eigen_vectors.slice(i) = signs.t() % eigen_vectors.each_row();
-      
+        }
+
       }
       
     }
@@ -75,15 +82,16 @@ struct RollEigenSlices : public Worker {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
       arma::mat sigma = arma_cov.slice(i);
-      arma::mat A = sigma.submat(0, 0, n_cols_x - 1, n_cols_x - 1);
-      arma::vec eigen_values(n_cols_x);
-      arma::mat eigen_vectors(n_cols_x, n_cols_x);
       
       // check if missing value is present
       bool any_na = sigma.has_nan();
       
       // don't compute if missing value 
       if (!any_na) {
+
+          arma::mat A = sigma.submat(0, 0, n_cols_x - 1, n_cols_x - 1);
+          arma::vec eigen_values;
+          arma::mat eigen_vectors;
         
         // check if solution is found
         bool status = arma::eig_sym(eigen_values, eigen_vectors, A);
@@ -100,27 +108,15 @@ struct RollEigenSlices : public Worker {
           
         } else {
           
-          arma::vec no_solution_row(n_cols_x);
-          no_solution_row.fill(NA_REAL);
-          
-          arma::mat no_solution_slice(n_cols_x, n_cols_x);
-          no_solution_slice.fill(NA_REAL);
-          
-          arma_eigen_values.row(i) = trans(no_solution_row);
-          arma_eigen_vectors.slice(i) = no_solution_slice;
+          arma_eigen_values.row(i).fill(NA_REAL);
+          arma_eigen_vectors.slice(i).fill(NA_REAL);
           
         }
         
       } else {
         
-        arma::vec no_solution_row(n_cols_x);
-        no_solution_row.fill(NA_REAL);
-        
-        arma::mat no_solution_slice(n_cols_x, n_cols_x);
-        no_solution_slice.fill(NA_REAL);
-        
-        arma_eigen_values.row(i) = trans(no_solution_row);
-        arma_eigen_vectors.slice(i) = no_solution_slice;
+        arma_eigen_values.row(i).fill(NA_REAL);
+        arma_eigen_vectors.slice(i).fill(NA_REAL);
         
       }
       
@@ -159,18 +155,18 @@ struct RollPcrInterceptTRUE : public Worker {
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
 
-      arma::rowvec no_solution(n_cols_x, arma::fill::value(NA_REAL));
       arma::mat sigma = arma_cov.slice(i);
-      arma::mat A = sigma.submat(0, 0, n_cols_x - 2, n_cols_x - 2);
-      arma::mat b = sigma.submat(0, n_cols_x - 1, n_cols_x - 2, n_cols_x - 1);
-      arma::vec gamma(n_cols_x - 1);
-      arma::mat eigen_vectors = arma_eigen_vectors.slice(i);
       
       // check if missing value is present
       bool any_na = sigma.has_nan();
       
       // don't compute if missing value 
       if (!any_na) {
+
+        arma::mat A = sigma.submat(0, 0, n_cols_x - 2, n_cols_x - 2);
+        arma::mat b = sigma.submat(0, n_cols_x - 1, n_cols_x - 2, n_cols_x - 1);
+        arma::vec gamma(n_cols_x - 1);
+        arma::mat eigen_vectors = arma_eigen_vectors.slice(i);
         
         // check if solution is found
         bool status_solve = arma::solve(gamma, A * eigen_vectors, b, arma::solve_opts::no_approx);
@@ -187,7 +183,7 @@ struct RollPcrInterceptTRUE : public Worker {
           arma_coef.submat(i, 1, i, n_cols_x - 1) = trans(coef);
           
           // intercept
-          arma::mat mean_x = arma_mean.submat(i, 0, i, n_cols_x - 2);
+          arma::vec mean_x = trans(arma_mean.submat(i, 0, i, n_cols_x - 2));
           arma_coef(i, 0) = arma_mean(i, n_cols_x - 1) - arma::dot(mean_x, coef);
           
           // r-squared
@@ -200,14 +196,14 @@ struct RollPcrInterceptTRUE : public Worker {
           
         } else {
           
-          arma_coef.row(i) = no_solution;
+          arma_coef.row(i).fill(NA_REAL);
           arma_rsq[i] = NA_REAL;
           
         }
         
       } else {
 
-        arma_coef.row(i) = no_solution;
+        arma_coef.row(i).fill(NA_REAL);
         arma_rsq[i] = NA_REAL;
         
       }
