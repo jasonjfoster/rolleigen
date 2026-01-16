@@ -90,8 +90,8 @@ struct RollEigenSlices : public Worker {
       if (!any_na) {
 
           arma::mat A = sigma.submat(0, 0, n_cols_x - 1, n_cols_x - 1);
-          arma::vec eigen_values;
-          arma::mat eigen_vectors;
+          arma::vec eigen_values(n_cols_x);
+          arma::mat eigen_vectors(n_cols_x, n_cols_x);
         
         // check if solution is found
         bool status = arma::eig_sym(eigen_values, eigen_vectors, A);

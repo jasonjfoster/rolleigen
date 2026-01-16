@@ -124,32 +124,45 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
         # "Unparseable 'response'; use is deprecated.  Use as.name(.) or `..`!"
         fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = as.name(names(data)[1])), data = data,
                                  center = center, scale = scale),
-                        error = function(x) NA)
+                        error = function(x) NULL)
         
       } else {
         
         fit <- tryCatch(pls::pcr(reformulate(termlabels = ".-1", response = as.name(names(data)[1])), data = data,
                                  center = center, scale = scale),
-                        error = function(x) NA)
+                        error = function(x) NULL)
         
       }
 
-      df_fit <- n_cols_x
-      
-      if (!all(is.na(fit)) & (i >= df_fit)) { # REVIEW WITH ROLLSHAP
+      if (!is.null(fit)) {
+
+        df_fit <- n_cols_x
+        df_resid <- nrow(data) - n_cols_x
         
-        fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
-        
-        result[["coefficients"]][i, ] <- fit_coef
-        
-        if (intercept) {
-          # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
-          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
-        } else {
-          # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
-          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+        if (!is.na(df_resid) && (df_resid >= 0)) {
+
+          summary_fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
+
+          if (length(summary_fit_coef) == df_fit) {
+
+            result[["coefficients"]][i, ] <- summary_fit_coef
+
+            var_y <- crossprod(y_subset)
+
+            if (!is.na(var_y) && (var_y > .Machine$double.eps)) {
+              if (intercept) {
+                # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+                result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+              } else {
+                # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+                result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+              }
+            }
+
+          }
+
         }
-        
+
       }
       
     }
@@ -207,35 +220,45 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
         
         fit <- tryCatch(pls::pcr(reformulate(termlabels = ".", response = names(data)[1]), data = data,
                                  center = center, scale = scale),
-                        error = function(x) NA)
+                        error = function(x) NULL)
         
       } else {
         
         fit <- tryCatch(pls::pcr(reformulate(termlabels = ".-1", response = names(data)[1]), data = data,
                                  center = center, scale = scale),
-                        error = function(x) NA)
+                        error = function(x) NULL)
         
       }
 
-      df_fit <- n_cols_x
-      
-      summary_fit <- summary(fit)
-      summary_fit_coef <- coef(summary_fit)[ , "Estimate"]
-      
-      if (!all(is.na(fit)) & (i >= df_fit)) { # REVIEW WITH ROLLSHAP
-        
-        fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
-        
-        result[["coefficients"]][i, ] <- fit_coef
-        
-        if (intercept) {
-          # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
-          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
-        } else {
-          # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
-          result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+      if (!is.null(fit)) {
+
+        df_fit <- n_cols_x
+        df_resid <- nrow(data) - n_cols_x
+
+        if (!is.na(df_resid) && (df_resid >= 0)) {
+
+          summary_fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
+
+          if (length(summary_fit_coef) == df_fit) {
+
+            result[["coefficients"]][i, ] <- summary_fit_coef
+
+            var_y <- crossprod(y_subset)
+
+            if (!is.na(var_y) && (var_y > .Machine$double.eps)) {
+              if (intercept) {
+                # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+                result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
+              } else {
+                # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+                result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
+              }
+            }
+
+          }
+
         }
-        
+
       }
       
     }
