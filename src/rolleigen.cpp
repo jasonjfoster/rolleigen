@@ -28,7 +28,7 @@ void check_weights_x(const int& n_rows_x, const int& width,
                      const arma::vec& weights) {
   
   if ((int)weights.size() < std::min(width, n_rows_x)) {
-    stop("length of 'weights' must equal either the number of rows in 'x' or 'width'");
+    stop("length of 'weights' must be greater than or equal to the number of rows in 'x' or 'width'");
   }
   
 }
@@ -37,7 +37,7 @@ void check_weights_lm(const int& n_rows_xy, const int& width,
                       const arma::vec& weights) {
   
   if ((int)weights.size() < std::min(width, n_rows_xy)) {
-    stop("length of 'weights' must equal either the number of rows in 'x' (and 'y') or 'width'");
+    stop("length of 'weights' must be greater than or equal to the number of rows in 'x' (and 'y') or 'width'");
   }
   
 }
@@ -52,13 +52,12 @@ bool check_lambda(const arma::vec& weights, const int& n_rows_x,
   // check if exponential-weights
   if (!status_eq) {
     
-    int i = 0;
     int n = weights.size();
     long double lambda = 0;
     long double lambda_prev = 0;
     
     // check if constant ratio
-    while (status_exp && (i <= (n - 2))) {
+    for (int i = 0; (i < n - 1) && status_exp; i++) {
       
       // ratio of weights
       lambda_prev = lambda;
@@ -72,8 +71,6 @@ bool check_lambda(const arma::vec& weights, const int& n_rows_x,
         status_exp = false;
         
       }
-      
-      i += 1;
       
     }
     
