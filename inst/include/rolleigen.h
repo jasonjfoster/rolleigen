@@ -6,6 +6,7 @@
 #include <RcppArmadillo.h>
 #include <RcppParallel.h>
 #include <roll.h>
+#include "rolleigen_check.h"
 using namespace Rcpp;
 using namespace RcppParallel;
 

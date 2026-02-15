@@ -1,105 +1,5 @@
 #include "rolleigen.h"
 
-void check_width(const int& width) {
-  
-  if (width < 1) {
-    stop("value of 'width' must be greater than zero");
-  }
-  
-}
-
-void check_comps(const arma::uvec& comps, const unsigned int& n_cols) {
-  
-  if (comps.max() > n_cols) {
-    stop("maximum value of 'n_comps' must be less than or equal to number of columns in 'x'");
-  }
-  
-  if (comps.min() < 1) {
-    stop("minimum value of 'n_comps' must be greater than or equal to one");
-  }
-  
-  if (comps.size() > n_cols) {
-    stop("length of 'n_comps' must be less than or equal to number of columns in 'x'");
-  }
-  
-}
-
-void check_weights_x(const int& n_rows_x, const int& width,
-                     const arma::vec& weights) {
-  
-  if ((int)weights.size() < std::min(width, n_rows_x)) {
-    stop("length of 'weights' must be greater than or equal to the number of rows in 'x' or 'width'");
-  }
-  
-}
-
-void check_weights_lm(const int& n_rows_xy, const int& width,
-                      const arma::vec& weights) {
-  
-  if ((int)weights.size() < std::min(width, n_rows_xy)) {
-    stop("length of 'weights' must be greater than or equal to the number of rows in 'x' (and 'y') or 'width'");
-  }
-  
-}
-
-bool check_lambda(const arma::vec& weights, const int& n_rows_x,
-                  const int& width, const bool& online) {
-  
-  // check if equal-weights
-  bool status_eq = all(weights == weights[0]);
-  bool status_exp = true;
-  
-  // check if exponential-weights
-  if (!status_eq) {
-    
-    int n = weights.size();
-    long double lambda = 0;
-    long double lambda_prev = 0;
-    
-    // check if constant ratio
-    for (int i = 0; (i < n - 1) && status_exp; i++) {
-      
-      // ratio of weights
-      lambda_prev = lambda;
-      lambda = weights[n - i - 2] / weights[n - i - 1];
-      
-      // tolerance for consistency with R's all.equal
-      if (((i > 0) && (std::abs(lambda - lambda_prev) > sqrt(arma::datum::eps))) ||
-          ((weights[n - i - 2] > weights[n - i - 1]) && (width < n_rows_x)) ||
-          (std::isnan(lambda) || (std::isinf(lambda)))) {
-        
-        status_exp = false;
-        
-      }
-      
-    }
-    
-  }
-  
-  if (!status_exp && online) {
-    warning("'online' is only supported for equal or exponential decay 'weights'");
-  }
-  
-  return status_exp;
-  
-}
-
-void check_min_obs(const int& min_obs) {
-  
-  if (min_obs < 1) {
-    stop("value of 'min_obs' must be greater than zero");
-  }
-  
-}
-
-void check_lm(const int& n_rows_x, const int& n_rows_y) {
-  
-  if (n_rows_x != n_rows_y) {
-    stop("number of rows in 'x' must equal the number of rows in 'y'");
-  }
-  
-}
-
 List dimnames_eigen(const int& n_cols) {
   
   CharacterVector result(n_cols);
@@ -237,16 +137,16 @@ arma::cube roll_cov_z(const NumericMatrix& x, const int& width,
   arma::cube arma_cov(n_cols_x, n_cols_x, n_rows_x);
   
   // check 'width' argument for errors
-  check_width(width);
+  rolleigen::check_pos_int(width, "width");
   
   // default 'weights' argument is equal-weighted,
   // otherwise check argument for errors
-  check_weights_x(n_rows_x, width, weights);
-  bool status = check_lambda(weights, n_rows_x, width, online);
+  rolleigen::check_weights(n_rows_x, width, weights, "'x'");
+  bool status = rolleigen::check_lambda(weights, n_rows_x, width, online);
   
   // default 'min_obs' argument is 'width',
   // otherwise check argument for errors
-  check_min_obs(min_obs);
+  rolleigen::check_pos_int(min_obs, "min_obs");
   
   // default 'complete_obs' argument is 'true',
   // otherwise check argument for errors
@@ -414,18 +314,18 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     arma::vec arma_rsq(n_rows_xy);
     
     // check 'x' and 'y' arguments for errors
-    check_lm(n_rows_xy, y.size());
+    rolleigen::check_rows_equal(n_rows_xy, y.size(), "x", "y");
     
     // check 'width' argument for errors
-    check_width(width);
+    rolleigen::check_pos_int(width, "width");
     
     // default 'n_comps' argument is all components
-    check_comps(arma_comps, n_cols_x - 1);
+    rolleigen::check_comps(arma_comps, n_cols_x - 1, "n_comps", "x");
     
     // default 'weights' argument is equal-weighted,
     // otherwise check argument for errors
-    check_weights_lm(n_rows_xy, width, weights);
-    bool status = check_lambda(weights, n_rows_xy, width, online);
+    rolleigen::check_weights(n_rows_xy, width, weights, "'x' (and 'y')");
+    bool status = rolleigen::check_lambda(weights, n_rows_xy, width, online);
     
     // check 'intercept' argument for errors
     if (!intercept) {
@@ -444,7 +344,7 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     
     // default 'min_obs' argument is 'width',
     // otherwise check argument for errors
-    check_min_obs(min_obs);
+    rolleigen::check_pos_int(min_obs, "min_obs");
     
     // cbind x and y variables
     NumericMatrix data(n_rows_xy, n_cols_x);
@@ -519,18 +419,18 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     arma::vec arma_rsq(n_rows_xy);
     
     // check 'x' and 'y' arguments for errors
-    check_lm(n_rows_xy, y.size());
+    rolleigen::check_rows_equal(n_rows_xy, y.size(), "x", "y");
     
     // check 'width' argument for errors
-    check_width(width);
+    rolleigen::check_pos_int(width, "width");
     
     // default 'n_comps' argument is all components
-    check_comps(arma_comps, n_cols_x - 1);
+    rolleigen::check_comps(arma_comps, n_cols_x - 1, "n_comps", "x");
     
     // default 'weights' argument is equal-weighted,
     // otherwise check argument for errors
-    check_weights_lm(n_rows_xy, width, weights);
-    bool status = check_lambda(weights, n_rows_xy, width, online);
+    rolleigen::check_weights(n_rows_xy, width, weights, "'x' (and 'y')");
+    bool status = rolleigen::check_lambda(weights, n_rows_xy, width, online);
     
     // check 'intercept' argument for errors
     if (!intercept) {
@@ -549,7 +449,7 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     
     // default 'min_obs' argument is 'width',
     // otherwise check argument for errors
-    check_min_obs(min_obs);
+    rolleigen::check_pos_int(min_obs, "min_obs");
     
     // cbind x and y variables
     NumericMatrix data(n_rows_xy, n_cols_x);
