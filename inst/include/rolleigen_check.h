@@ -1,4 +1,4 @@
-// todo (roll >= 1.2.1): use namespace roll except for check_bounds_int
+// todo (roll >= 1.2.1): use namespace roll except for check_comps
 
 #ifndef ROLLEIGEN_CHECK_H
 #define ROLLEIGEN_CHECK_H

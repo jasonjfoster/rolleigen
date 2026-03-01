@@ -214,20 +214,11 @@ List roll_eigen(const SEXP& x, const int& width,
     // create and return a matrix or xts object for eigenvalues
     NumericMatrix eigen_values(wrap(arma_eigen_values));
     List dimnames = xx.attr("dimnames");
-    eigen_values.attr("dimnames") = dimnames_eigen(n_cols);
-    eigen_values.attr("index") = xx.attr("index");
-    eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");
-    eigen_values.attr("tclass") = xx.attr("tclass");
-    eigen_values.attr("tzone") = xx.attr("tzone");
-    eigen_values.attr("class") = xx.attr("class");
+    rolleigen::xts_attr(eigen_values, xx, dimnames_eigen(n_cols));
     
     // create and return a cube for eigenvectors
     NumericVector eigen_vectors(wrap(arma_eigen_vectors));
-    eigen_vectors.attr("dim") = IntegerVector::create(n_cols, n_cols, n_rows);
-    if (dimnames.size() > 1) {
-      eigen_vectors.attr("dimnames") = List::create(dimnames[1], R_NilValue);
-    }
+    rolleigen::cube_attr(eigen_vectors, n_cols, n_cols, n_rows, dimnames, List());
     
     // create and return a list
     List result = List::create(Named("values") = eigen_values,
@@ -264,20 +255,11 @@ List roll_eigen(const SEXP& x, const int& width,
     // create and return a matrix or xts object for eigenvalues
     NumericMatrix eigen_values(wrap(arma_eigen_values));
     List dimnames = xx.attr("dimnames");
-    eigen_values.attr("dimnames") = dimnames;
-    eigen_values.attr("index") = xx.attr("index");
-    eigen_values.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    eigen_values.attr(".indexTZ") = xx.attr(".indexTZ");
-    eigen_values.attr("tclass") = xx.attr("tclass");
-    eigen_values.attr("tzone") = xx.attr("tzone");
-    eigen_values.attr("class") = xx.attr("class");
+    rolleigen::xts_attr(eigen_values, xx, dimnames);
     
     // create and return a cube for eigenvectors
     NumericVector eigen_vectors(wrap(arma_eigen_vectors));
-    eigen_vectors.attr("dim") = IntegerVector::create(n_cols, n_cols, n_rows);
-    if (dimnames.size() > 1) {
-      eigen_vectors.attr("dimnames") = List::create(dimnames[1], R_NilValue);
-    }
+    rolleigen::cube_attr(eigen_vectors, n_cols, n_cols, n_rows, dimnames, List());
     
     // create and return a list
     List result = List::create(Named("values") = eigen_values,
@@ -552,39 +534,16 @@ List roll_pcr(const SEXP& x, const SEXP& y,
       NumericVector coef(wrap(arma_coef_z));
       coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
       List x_dimnames = xx.attr("dimnames");
-      coef.attr("dimnames") = dimnames_lm_x(x_dimnames, n_cols_x, intercept);
-      coef.attr("index") = xx.attr("index");
-      coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
-      coef.attr(".indexTZ") = xx.attr(".indexTZ");
-      coef.attr("tclass") = xx.attr("tclass");
-      coef.attr("tzone") = xx.attr("tzone");
-      coef.attr("class") = xx.attr("class");
+      rolleigen::xts_attr(coef, xx, dimnames_lm_x(x_dimnames, n_cols_x, intercept));
 
       // create and return a matrix or xts object for r-squareds
       NumericVector rsq(wrap(arma_rsq_z));
-      rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-      if (x_dimnames.size() > 1) {
-        rsq.attr("dimnames") = List::create(x_dimnames[0], "R-squared");
-      } else {
-        rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
-      }
-      rsq.attr("index") = xx.attr("index");
-      rsq.attr(".indexCLASS") = xx.attr(".indexCLASS");
-      rsq.attr(".indexTZ") = xx.attr(".indexTZ");
-      rsq.attr("tclass") = xx.attr("tclass");
-      rsq.attr("tzone") = xx.attr("tzone");
-      rsq.attr("class") = xx.attr("class");
+      rolleigen::rsq_attr(rsq, n_rows_xy, xx, x_dimnames);
 
       // // create and return a matrix or xts object for standard errors
       // NumericVector se(wrap(arma_se_z));
       // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-      // se.attr("dimnames") = coef.attr("dimnames");
-      // se.attr("index") = xx.attr("index");
-      // se.attr(".indexCLASS") = xx.attr(".indexCLASS");
-      // se.attr(".indexTZ") = xx.attr(".indexTZ");
-      // se.attr("tclass") = xx.attr("tclass");
-      // se.attr("tzone") = xx.attr("tzone");
-      // se.attr("class") = xx.attr("class");
+      // rolleigen::xts_attr(se, xx, coef.attr("dimnames"));
 
       // create and return a list
       result = List::create(Named("coefficients") = coef,
@@ -608,39 +567,16 @@ List roll_pcr(const SEXP& x, const SEXP& y,
         NumericVector coef(wrap(arma_coef_z));
         coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
         List dimnames_x = xx.attr("dimnames");
-        coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
-        coef.attr("index") = xx.attr("index");
-        coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
-        coef.attr(".indexTZ") = xx.attr(".indexTZ");
-        coef.attr("tclass") = xx.attr("tclass");
-        coef.attr("tzone") = xx.attr("tzone");
-        coef.attr("class") = xx.attr("class");
+        rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
 
         // create and return a matrix or xts object for r-squareds
         NumericVector rsq(wrap(arma_rsq_z));
-        rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-        if (dimnames_x.size() > 1) {
-          rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
-        } else {
-          rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
-        }
-        rsq.attr("index") = xx.attr("index");
-        rsq.attr(".indexCLASS") = xx.attr(".indexCLASS");
-        rsq.attr(".indexTZ") = xx.attr(".indexTZ");
-        rsq.attr("tclass") = xx.attr("tclass");
-        rsq.attr("tzone") = xx.attr("tzone");
-        rsq.attr("class") = xx.attr("class");
+        rolleigen::rsq_attr(rsq, n_rows_xy, xx, dimnames_x);
 
         // // create and return a matrix or xts object for standard errors
         // NumericVector se(wrap(arma_se_z));
         // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-        // se.attr("dimnames") = coef.attr("dimnames");
-        // se.attr("index") = xx.attr("index");
-        // se.attr(".indexCLASS") = xx.attr(".indexCLASS");
-        // se.attr(".indexTZ") = xx.attr(".indexTZ");
-        // se.attr("tclass") = xx.attr("tclass");
-        // se.attr("tzone") = xx.attr("tzone");
-        // se.attr("class") = xx.attr("class");
+        // rolleigen::xts_attr(se, xx, coef.attr("dimnames"));
 
         result_coef(z) = coef;
         result_rsq(z) = rsq;
@@ -694,39 +630,16 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     NumericVector coef(wrap(arma_coef_z));
     coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
     List dimnames_x = xx.attr("dimnames");
-    coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
-    coef.attr("index") = xx.attr("index");
-    coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    coef.attr(".indexTZ") = xx.attr(".indexTZ");
-    coef.attr("tclass") = xx.attr("tclass");
-    coef.attr("tzone") = xx.attr("tzone");
-    coef.attr("class") = xx.attr("class");
+    rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
     
     // create and return a matrix or xts object for r-squareds
     NumericVector rsq(wrap(arma_rsq_z));
-    rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-    if (dimnames_x.size() > 1) {
-      rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
-    } else {
-      rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
-    }
-    rsq.attr("index") = xx.attr("index");
-    rsq.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    rsq.attr(".indexTZ") = xx.attr(".indexTZ");
-    rsq.attr("tclass") = xx.attr("tclass");
-    rsq.attr("tzone") = xx.attr("tzone");
-    rsq.attr("class") = xx.attr("class");
+    rolleigen::rsq_attr(rsq, n_rows_xy, xx, dimnames_x);
     
     // // create and return a matrix or xts object for standard errors
     // NumericVector se(wrap(arma_se_z));
     // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-    // se.attr("dimnames") = coef.attr("dimnames");
-    // se.attr("index") = xx.attr("index");
-    // se.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    // se.attr(".indexTZ") = xx.attr(".indexTZ");
-    // se.attr("tclass") = xx.attr("tclass");
-    // se.attr("tzone") = xx.attr("tzone");
-    // se.attr("class") = xx.attr("class");
+    // rolleigen::xts_attr(se, xx, coef.attr("dimnames"));
     
     // create and return a list
     result = List::create(Named("coefficients") = coef,
@@ -773,39 +686,16 @@ List roll_pcr(const SEXP& x, const SEXP& y,
       NumericVector coef(wrap(arma_coef_z));
       coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
       List dimnames_x = xx.attr("dimnames");
-      coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
-      coef.attr("index") = yy.attr("index");
-      coef.attr(".indexCLASS") = yy.attr(".indexCLASS");
-      coef.attr(".indexTZ") = yy.attr(".indexTZ");
-      coef.attr("tclass") = yy.attr("tclass");
-      coef.attr("tzone") = yy.attr("tzone");
-      coef.attr("class") = yy.attr("class");
+      rolleigen::xts_attr(coef, yy, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
       
       // create and return a matrix or xts object for r-squareds
       NumericVector rsq(wrap(arma_rsq_z));
-      rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-      if (dimnames_x.size() > 1) {
-        rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
-      } else {
-        rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
-      }
-      rsq.attr("index") = yy.attr("index");
-      rsq.attr(".indexCLASS") = yy.attr(".indexCLASS");
-      rsq.attr(".indexTZ") = yy.attr(".indexTZ");
-      rsq.attr("tclass") = yy.attr("tclass");
-      rsq.attr("tzone") = yy.attr("tzone");
-      rsq.attr("class") = yy.attr("class");
+      rolleigen::rsq_attr(rsq, n_rows_xy, yy, dimnames_x);
       
       // // create and return a matrix or xts object for standard errors
       // NumericVector se(wrap(arma_se_z));
       // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-      // se.attr("dimnames") = coef.attr("dimnames");
-      // se.attr("index") = yy.attr("index");
-      // se.attr(".indexCLASS") = yy.attr(".indexCLASS");
-      // se.attr(".indexTZ") = yy.attr(".indexTZ");
-      // se.attr("tclass") = yy.attr("tclass");
-      // se.attr("tzone") = yy.attr("tzone");
-      // se.attr("class") = yy.attr("class");
+      // rolleigen::xts_attr(se, yy, coef.attr("dimnames"));
       
       // create and return a list
       result = List::create(Named("coefficients") = coef,
@@ -829,39 +719,16 @@ List roll_pcr(const SEXP& x, const SEXP& y,
         NumericVector coef(wrap(arma_coef_z));
         coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
         List dimnames_x = xxx.attr("dimnames");
-        coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
-        coef.attr("index") = yy.attr("index");
-        coef.attr(".indexCLASS") = yy.attr(".indexCLASS");
-        coef.attr(".indexTZ") = yy.attr(".indexTZ");
-        coef.attr("tclass") = yy.attr("tclass");
-        coef.attr("tzone") = yy.attr("tzone");
-        coef.attr("class") = yy.attr("class");
+        rolleigen::xts_attr(coef, yy, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
         
         // create and return a matrix or xts object for r-squareds
         NumericVector rsq(wrap(arma_rsq_z));
-        rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-        if (dimnames_x.size() > 1) {
-          rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
-        } else {
-          rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
-        }
-        rsq.attr("index") = yy.attr("index");
-        rsq.attr(".indexCLASS") = yy.attr(".indexCLASS");
-        rsq.attr(".indexTZ") = yy.attr(".indexTZ");
-        rsq.attr("tclass") = yy.attr("tclass");
-        rsq.attr("tzone") = yy.attr("tzone");
-        rsq.attr("class") = yy.attr("class");
+        rolleigen::rsq_attr(rsq, n_rows_xy, yy, dimnames_x);
         
         // // create and return a matrix or xts object for standard errors
         // NumericVector se(wrap(arma_se_z));
         // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-        // se.attr("dimnames") = coef.attr("dimnames");
-        // se.attr("index") = yy.attr("index");
-        // se.attr(".indexCLASS") = yy.attr(".indexCLASS");
-        // se.attr(".indexTZ") = yy.attr(".indexTZ");
-        // se.attr("tclass") = yy.attr("tclass");
-        // se.attr("tzone") = yy.attr("tzone");
-        // se.attr("class") = yy.attr("class");
+        // rolleigen::xts_attr(se, yy, coef.attr("dimnames"));
         
         result_coef(z) = coef;
         result_rsq(z) = rsq;
@@ -916,39 +783,16 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     NumericVector coef(wrap(arma_coef_z));
     coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
     List dimnames_x = xx.attr("dimnames");
-    coef.attr("dimnames") = dimnames_lm_x(dimnames_x, n_cols_x, intercept);
-    coef.attr("index") = xx.attr("index");
-    coef.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    coef.attr(".indexTZ") = xx.attr(".indexTZ");
-    coef.attr("tclass") = xx.attr("tclass");
-    coef.attr("tzone") = xx.attr("tzone");
-    coef.attr("class") = xx.attr("class");
+    rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
     
     // create and return a matrix or xts object for r-squareds
     NumericVector rsq(wrap(arma_rsq_z));
-    rsq.attr("dim") = IntegerVector::create(n_rows_xy, 1);
-    if (dimnames_x.size() > 1) {
-      rsq.attr("dimnames") = List::create(dimnames_x[0], "R-squared");
-    } else {
-      rsq.attr("dimnames") = List::create(R_NilValue, "R-squared");
-    }
-    rsq.attr("index") = xx.attr("index");
-    rsq.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    rsq.attr(".indexTZ") = xx.attr(".indexTZ");
-    rsq.attr("tclass") = xx.attr("tclass");
-    rsq.attr("tzone") = xx.attr("tzone");
-    rsq.attr("class") = xx.attr("class");
+    rolleigen::rsq_attr(rsq, n_rows_xy, xx, dimnames_x);
     
     // // create and return a matrix or xts object for standard errors
     // NumericVector se(wrap(arma_se_z));
     // se.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
-    // se.attr("dimnames") = coef.attr("dimnames");
-    // se.attr("index") = xx.attr("index");
-    // se.attr(".indexCLASS") = xx.attr(".indexCLASS");
-    // se.attr(".indexTZ") = xx.attr(".indexTZ");
-    // se.attr("tclass") = xx.attr("tclass");
-    // se.attr("tzone") = xx.attr("tzone");
-    // se.attr("class") = xx.attr("class");
+    // rolleigen::xts_attr(se, xx, coef.attr("dimnames"));
     
     // create and return a list
     result = List::create(Named("coefficients") = coef,

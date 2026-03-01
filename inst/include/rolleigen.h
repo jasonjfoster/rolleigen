@@ -7,6 +7,7 @@
 #include <RcppParallel.h>
 #include <roll.h>
 #include "rolleigen_check.h"
+#include "rolleigen_attr.h"
 using namespace Rcpp;
 using namespace RcppParallel;
 
