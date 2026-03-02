@@ -18,8 +18,8 @@ inline void check_pos_int(const int& value, const char* name) {
 }
 
 // dimension checks: equality
-inline  void check_rows_equal(const int& n_rows_a, const int& n_rows_b,
-                              const char* name_a, const char* name_b) {
+inline void check_rows_equal(const int& n_rows_a, const int& n_rows_b,
+                             const char* name_a, const char* name_b) {
 
   if (n_rows_a != n_rows_b) {
     stop("number of rows in '%s' must equal the number of rows in '%s'", name_a, name_b);

@@ -1,3 +1,5 @@
+// todo (roll >= 1.2.1): use namespace roll
+
 #ifndef ROLLEIGEN_ATTR_H
 #define ROLLEIGEN_ATTR_H
 
