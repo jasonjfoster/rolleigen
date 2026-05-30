@@ -19,16 +19,16 @@ The package supports rolling and expanding windows, weights, and handling of mis
 
 Install the development version from GitHub:
 
-``` r
-# install.packages("devtools")
-devtools::install_github("jasonjfoster/rolleigen")
+```r
+# install.packages("pak")
+pak::pak("jasonjfoster/rolleigen")
 ```
 
 ## Usage
 
 Load the package and supply a dataset:
 
-``` r
+```r
 library(rolleigen) # roll (>= 1.1.7)
 
 n <- 15
@@ -37,6 +37,7 @@ x <- matrix(rnorm(n * m), nrow = n, ncol = m)
 y <- rnorm(n)
 weights <- 0.9 ^ (n:1)
 ```
+
 Then, to compute rolling and expanding eigenvalues and eigenvectors, use the `roll_eigen()` function:
 
 ```r
@@ -55,7 +56,7 @@ roll_eigen(x, width = n, min_obs = 1, weights = weights)
 
 Or use the `roll_pcr()` function to compute rolling and expanding principal component regressions:
 
-``` r
+```r
 # rolling regressions with complete windows
 roll_pcr(x, y, width = 5, n_comps = 1)
 
