@@ -17,7 +17,13 @@ The package supports rolling and expanding windows, weights, and handling of mis
 
 ## Installation
 
-Install the development version from GitHub:
+Install the released version from CRAN:
+
+```r
+# install.packages("rolleigen")
+```
+
+Or the development version from GitHub:
 
 ```r
 # install.packages("pak")
