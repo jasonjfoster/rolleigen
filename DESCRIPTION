@@ -1,17 +1,49 @@
-Package: rolleigen
 Type: Package
+Package: rolleigen
 Title: Rolling Eigenanalysis
 Version: 1.0.0
-Authors@R: person("Jason", "Foster", , "jason.j.foster@gmail.com", c("aut", "cre"))
-Description: Fast and efficient computation of rolling and expanding eigenanalysis for time-series data. The 'rolleigen' package decomposes the covariance matrix of the explanatory variables into eigenvalues and eigenvectors to perform principal component analysis (Pearson, 1901, <doi:10.1080/14786440109462720>; Hotelling, 1933, <doi:10.1037/h0071325>) and principal component regression (Massy, 1965, <doi:10.1080/01621459.1965.10480787>) over rolling and expanding windows. For each window, the eigenvalues and eigenvectors are computed from the covariance matrix and, optionally, ordered from largest to smallest to summarize the directions of greatest variation in the data. A subset of leading components is then used to fit a regression that mitigates collinearity in the explanatory variables. Use cases include dimensionality reduction, factor extraction, and regression on collinear explanatory variables. The package supports rolling and expanding windows, weights, and handling of missing values via the min_obs, complete_obs, and na_restore arguments. The implementation uses the online and offline algorithms from the 'roll' package to compute rolling and expanding cross-products efficiently, with parallelism across columns and windows provided by 'RcppParallel'.
+Authors@R: 
+    person("Jason", "Foster", , "jason.j.foster@gmail.com", role = c("aut", "cre"))
+Description: Fast and efficient computation of rolling and expanding
+    eigenanalysis for time-series data. The 'rolleigen' package decomposes
+    the covariance matrix of the explanatory variables into eigenvalues
+    and eigenvectors to perform principal component analysis (Pearson,
+    1901, <doi:10.1080/14786440109462720>; Hotelling, 1933,
+    <doi:10.1037/h0071325>) and principal component regression (Massy,
+    1965, <doi:10.1080/01621459.1965.10480787>) over rolling and expanding
+    windows. For each window, the eigenvalues and eigenvectors are
+    computed from the covariance matrix and, optionally, ordered from
+    largest to smallest to summarize the directions of greatest variation
+    in the data. A subset of leading components is then used to fit a
+    regression that mitigates collinearity in the explanatory variables.
+    Use cases include dimensionality reduction, factor extraction, and
+    regression on collinear explanatory variables. The package supports
+    rolling and expanding windows, weights, and handling of missing values
+    via the min_obs, complete_obs, and na_restore arguments. The
+    implementation uses the online and offline algorithms from the 'roll'
+    package to compute rolling and expanding cross-products efficiently,
+    with parallelism across columns and windows provided by
+    'RcppParallel'.
 License: GPL (>= 2)
 URL: https://github.com/jasonjfoster/rolleigen
 BugReports: https://github.com/jasonjfoster/rolleigen/issues
-Depends: R (>= 3.5.0)
-Imports: Rcpp, RcppParallel
-LinkingTo: Rcpp, RcppArmadillo, RcppParallel, roll (>= 1.1.7)
-SystemRequirements: GNU make
-Encoding: UTF-8
-Suggests: covr, testthat, zoo, pls, roll
+Depends: 
+    R (>= 3.5.0)
+Imports: 
+    Rcpp,
+    RcppParallel
+Suggests: 
+    covr,
+    pls,
+    roll,
+    testthat,
+    zoo
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo,
+    RcppParallel,
+    roll (>= 1.1.7)
 Config/roxygen2/old_usage: TRUE
 Config/roxygen2/version: 8.0.0
+Encoding: UTF-8
+SystemRequirements: GNU make
