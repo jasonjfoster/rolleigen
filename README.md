@@ -1,7 +1,9 @@
 # rolleigen
 
 [![](https://github.com/jasonjfoster/rolleigen/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jasonjfoster/rolleigen/actions/workflows/check-standard.yaml)
+[![](https://www.r-pkg.org/badges/version/rolleigen)](https://cran.r-project.org/package=rolleigen)
 [![](https://codecov.io/gh/jasonjfoster/rolleigen/graph/badge.svg)](https://app.codecov.io/github/jasonjfoster/rolleigen)
+[![](https://cranlogs.r-pkg.org/badges/rolleigen?color=brightgreen)](https://www.r-pkg.org/pkg/rolleigen)
 
 ## Overview
 
@@ -20,7 +22,7 @@ The package supports rolling and expanding windows, weights, and handling of mis
 Install the released version from CRAN:
 
 ```r
-# install.packages("rolleigen")
+install.packages("rolleigen")
 ```
 
 Or the development version from GitHub:
