@@ -43,15 +43,16 @@ struct RollOrderSlices : public Worker {
         if (!any_na && !any_na0) {
           
           arma::mat similarity = trans(eigen_vectors) * eigen_vectors0;
-          arma::uvec order = arma::index_max(arma::abs(similarity), 1);
-          
+          // assumes a one-to-one match between windows
+          arma::uvec order = trans(arma::index_max(arma::abs(similarity), 0));
+
           eigen_vectors = eigen_vectors.cols(order);
-          similarity = similarity.cols(order);
+          similarity = similarity.rows(order);
           
           arma::vec signs = arma::sign(similarity.diag());
           
           arma_eigen_values.row(i) = trans(eigen_values(order));
-          arma_eigen_vectors.slice(i) = eigen_vectors.each_col() % signs;
+          arma_eigen_vectors.slice(i) = eigen_vectors.each_row() % trans(signs);
         
         }
 
