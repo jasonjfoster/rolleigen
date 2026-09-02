@@ -12,9 +12,9 @@ Description: Fast and efficient computation of rolling and expanding
     <doi:10.1037/h0071325>) and principal component regression (Massy,
     1965, <doi:10.1080/01621459.1965.10480787>) over rolling and expanding
     windows. For each window, the eigenvalues and eigenvectors are
-    computed from the covariance matrix and, optionally, ordered from
-    largest to smallest to summarize the directions of greatest variation
-    in the data. A subset of leading components is then used to fit a
+    computed from the covariance matrix and, optionally, ordered from the
+    largest to smallest eigenvalue to summarize the directions of greatest
+    variation in the data. A subset of leading components is then used to fit a
     regression that mitigates collinearity in the explanatory variables.
     Use cases include dimensionality reduction, factor extraction, and
     regression on collinear explanatory variables. The package supports
