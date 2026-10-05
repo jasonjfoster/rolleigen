@@ -33,7 +33,7 @@ rollapplyr_cube <- function(f, x, width, ...) {
   
 }
 
-rollapplyr_eigen <- function(x, width, center, scale) {
+rollapplyr_eigen <- function(x, width, center, scale, order, min_obs) {
   
   if (!is.matrix(x)) {
     
@@ -66,7 +66,7 @@ rollapplyr_eigen <- function(x, width, center, scale) {
   
   for (i in 1:n_rows_x) {
     
-    if (anyNA(cov[ , , i]) || any(is.infinite(cov[ , , i]))) {
+    if ((min(i, width) < min_obs) || anyNA(cov[ , , i]) || any(is.infinite(cov[ , , i]))) {
       
       result[["values"]][i , ] <- NA
       result[["vectors"]][ , , i] <- NA
@@ -81,6 +81,10 @@ rollapplyr_eigen <- function(x, width, center, scale) {
     
   }
   
+  if (order) {
+    result <- rollapplyr_order(result)
+  }
+  
   if (exists("x_attr")) {
     attributes(result[["values"]]) <- x_attr
   }
@@ -92,6 +96,42 @@ rollapplyr_eigen <- function(x, width, center, scale) {
   # }
   attr(result[["values"]], "dimnames") <- list(x_dimnames[[1]], NULL)
   attr(result[["vectors"]], "dimnames") <- list(x_dimnames[[2]], NULL)
+  
+  return(result)
+  
+}
+
+rollapplyr_order <- function(result) {
+  
+  n_rows_x <- dim(result[["vectors"]])[3]
+  n_cols_x <- dim(result[["vectors"]])[1]
+  
+  for (i in 1:n_rows_x) {
+    
+    if (i > 1) {
+      
+      eigen_values <- result[["values"]][i, ]
+      eigen_vectors <- matrix(result[["vectors"]][ , , i], n_cols_x, n_cols_x)
+      eigen_vectors0 <- matrix(result[["vectors"]][ , , i - 1], n_cols_x, n_cols_x)
+      
+      if (!anyNA(eigen_vectors) && !anyNA(eigen_vectors0)) {
+        
+        similarity <- crossprod(eigen_vectors, eigen_vectors0)
+        order <- apply(abs(similarity), 2, which.max)
+        
+        eigen_vectors <- eigen_vectors[ , order, drop = FALSE]
+        similarity <- similarity[order, , drop = FALSE]
+        
+        signs <- sign(diag(similarity))
+        
+        result[["values"]][i, ] <- eigen_values[order]
+        result[["vectors"]][ , , i] <- sweep(eigen_vectors, 2, signs, "*")
+        
+      }
+      
+    }
+    
+  }
   
   return(result)
   

@@ -1,7 +1,7 @@
 Type: Package
 Package: rolleigen
 Title: Rolling Eigenanalysis
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person("Jason", "Foster", , "jason.j.foster@gmail.com", role = c("aut", "cre"))
 Description: Fast and efficient computation of rolling and expanding

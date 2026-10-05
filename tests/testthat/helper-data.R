@@ -12,18 +12,22 @@ test_intercept <- c(TRUE, FALSE)
 test_center <- c(TRUE, FALSE)
 test_scale <- c(TRUE, FALSE)
 test_order <- c(TRUE, FALSE)
-test_min_obs <- 1
+test_min_obs <- c(1, n_vars + 1)
 
 # test data
 test_ls <- list("random matrix with 0's" =
                   matrix(sample(c(0, rnorm(n_size - 1)), n_size, replace = TRUE,
                                 prob = rep(1 / n_size, n_size)),
-                         nrow = n_obs, ncol = n_vars))
+                         nrow = n_obs, ncol = n_vars),
+                
+                "random matrix with distinct eigenvalues" =
+                  matrix(rnorm(n_size), nrow = n_obs, ncol = n_vars) %*%
+                  diag(2 ^ (n_vars:1)))
 
 if (requireNamespace("zoo", quietly = TRUE)) {
-  test_ls[[1]] <- zoo::zoo(test_ls[[1]], dates)
+  test_ls <- lapply(test_ls, function(x) zoo::zoo(x, dates))
 }
 
-test_ls[[1]] <- setNames(test_ls[[1]], paste0("x", rep(1:n_vars)))
+test_ls <- lapply(test_ls, setNames, paste0("x", rep(1:n_vars)))
 
 # colnames(test_ls[[1]]) <- paste0("x", rep(1:n_vars))
