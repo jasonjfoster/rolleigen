@@ -14,16 +14,16 @@ Description: Fast and efficient computation of rolling and expanding
     windows. For each window, the eigenvalues and eigenvectors are
     computed from the covariance matrix and, optionally, ordered from the
     largest to smallest eigenvalue to summarize the directions of greatest
-    variation in the data. A subset of leading components is then used to fit a
-    regression that mitigates collinearity in the explanatory variables.
-    Use cases include dimensionality reduction, factor extraction, and
-    regression on collinear explanatory variables. The package supports
-    rolling and expanding windows, weights, and handling of missing values
-    via the min_obs, complete_obs, and na_restore arguments. The
-    implementation uses the online and offline algorithms from the 'roll'
-    package to compute rolling and expanding cross-products efficiently,
-    with parallelism across columns and windows provided by
-    'RcppParallel'.
+    variation in the data. A subset of leading components is then used to
+    fit a regression that mitigates collinearity in the explanatory
+    variables.  Use cases include dimensionality reduction, factor
+    extraction, and regression on collinear explanatory variables. The
+    package supports rolling and expanding windows, weights, and handling
+    of missing values via the min_obs, complete_obs, and na_restore
+    arguments. The implementation uses the online and offline algorithms
+    from the 'roll' package to compute rolling and expanding
+    cross-products efficiently, with parallelism across columns and
+    windows provided by 'RcppParallel'.
 License: GPL (>= 2)
 URL: https://github.com/jasonjfoster/rolleigen
 BugReports: https://github.com/jasonjfoster/rolleigen/issues
@@ -44,6 +44,6 @@ LinkingTo:
     RcppParallel,
     roll (>= 1.1.7)
 Config/roxygen2/old_usage: TRUE
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
 Encoding: UTF-8
 SystemRequirements: GNU make
