@@ -16,6 +16,14 @@
 #' if \code{FALSE} then pairwise is used.
 #' @param na_restore logical. Should missing values be restored?
 #' @param online logical. Process observations using an online algorithm.
+#' @details The eigenvalues and eigenvectors of the weighted covariance matrix of \code{x}, or the
+#' weighted correlation matrix if \code{scale} is \code{TRUE}, are computed within each window and
+#' returned in decreasing order, consistent with \code{base::eigen}. If \code{order} is \code{TRUE}
+#' then the components of each window are matched, in sign and order, to the previous window by the
+#' largest absolute cosine similarity, which assumes full-rank windows.
+#'
+#' The online algorithm is used for equal or exponential decay \code{weights}, otherwise the offline
+#' algorithm is used with a warning if \code{online} is \code{TRUE}.
 #' @return A list containing the following components:
 #' \item{values}{An object of the same class and dimension as \code{x} with the rolling and expanding
 #' eigenvalues.}
@@ -76,6 +84,14 @@ roll_eigen <- function(x, width, weights = rep(1, width),
 #' if \code{FALSE} then pairwise is used.
 #' @param na_restore logical. Should missing values be restored?
 #' @param online logical. Process observations using an online algorithm.
+#' @details The eigenvectors of the weighted covariance matrix of \code{x} are computed within each
+#' window and ordered from the largest to smallest eigenvalue, then \code{y} is regressed on the
+#' leading \code{n_comps} components and the coefficients are mapped back to the original variables.
+#'
+#' \code{intercept = FALSE}, \code{center = FALSE}, \code{scale = TRUE} and \code{complete_obs = FALSE}
+#' are not supported, so a warning is given and the arguments are ignored. The online algorithm is
+#' used for equal or exponential decay \code{weights}, otherwise the offline algorithm is used with
+#' a warning if \code{online} is \code{TRUE}.
 #' @return A list containing the following components:
 #' \item{coefficients}{A list of objects with the rolling and expanding coefficients for each \code{y}.
 #' An object is the same class and dimension (with an added column for the intercept) as \code{x}.}
@@ -100,7 +116,7 @@ roll_eigen <- function(x, width, weights = rep(1, width),
 #' # expanding regressions with partial windows and weights
 #' roll_pcr(x, y, width = n, n_comps = 1, min_obs = 1, weights = weights)
 #' @export
-roll_pcr <- function(x, y, width, n_comps = ncol(x), weights = rep(1, width),
+roll_pcr <- function(x, y, width, n_comps = NCOL(x), weights = rep(1, width),
                      intercept = TRUE, center = TRUE, scale = FALSE,
                      min_obs = width, complete_obs = TRUE, na_restore = FALSE,
                      online = TRUE) {

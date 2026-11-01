@@ -1,27 +1,32 @@
-cov.wt_cov <- function(x, center) {
+cov.wt_cov <- function(x, weights, center) {
   
-  result <- cov.wt(x, center = center)$cov
-  
-  return(result)
-  
-}
-
-cov.wt_cor <- function(x, center) {
-  
-  result <- cov.wt(x, cor = TRUE, center = center)$cor
+  result <- cov.wt(x, wt = weights, center = center)$cov
   
   return(result)
   
 }
 
-rollapplyr_cube <- function(f, x, width, ...) {
+cov.wt_cor <- function(x, weights, center) {
+  
+  result <- cov.wt(x, wt = weights, cor = TRUE, center = center)$cor
+  
+  return(result)
+  
+}
+
+rollapplyr_cube <- function(f, x, width, weights, ...) {
   
   n_rows_x <- nrow(x)
   n_cols_x <- ncol(x)
   result <- array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x))
   
   for (i in 1:n_rows_x) {
-    result[ , , i] <- f(x[max(1, i - width + 1):i, , drop = FALSE], ...)
+    
+    x_subset <- x[max(1, i - width + 1):i, , drop = FALSE]
+    weights_subset <- tail(weights, min(i, width))
+    
+    result[ , , i] <- f(x_subset, weights_subset, ...)
+    
   }
   
   # attr(result, "dim") <- c(n_cols_x, n_cols_x, n_rows_x)
@@ -33,7 +38,7 @@ rollapplyr_cube <- function(f, x, width, ...) {
   
 }
 
-rollapplyr_eigen <- function(x, width, center, scale, order, min_obs) {
+rollapplyr_eigen <- function(x, width, weights, center, scale, order, min_obs) {
   
   if (!is.matrix(x)) {
     
@@ -59,9 +64,9 @@ rollapplyr_eigen <- function(x, width, center, scale, order, min_obs) {
                  "vectors" = array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x)))
     
   if (scale) {
-    cov <- rollapplyr_cube(cov.wt_cor, x, width, center = center)
+    cov <- rollapplyr_cube(cov.wt_cor, x, width, weights, center = center)
   } else {
-    cov <- rollapplyr_cube(cov.wt_cov, x, width, center = center)
+    cov <- rollapplyr_cube(cov.wt_cov, x, width, weights, center = center)
   }
   
   for (i in 1:n_rows_x) {
@@ -130,7 +135,6 @@ rollapplyr_order <- function(result) {
       }
       
     }
-    
   }
   
   return(result)

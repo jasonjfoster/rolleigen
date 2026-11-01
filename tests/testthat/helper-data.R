@@ -13,6 +13,9 @@ test_center <- c(TRUE, FALSE)
 test_scale <- c(TRUE, FALSE)
 test_order <- c(TRUE, FALSE)
 test_min_obs <- c(1, n_vars + 1)
+test_complete_obs <- c(TRUE, FALSE)
+test_na_restore <- c(TRUE, FALSE)
+test_online <- c(TRUE, FALSE)
 
 # test data
 test_ls <- list("random matrix with 0's" =
@@ -22,12 +25,17 @@ test_ls <- list("random matrix with 0's" =
                 
                 "random matrix with distinct eigenvalues" =
                   matrix(rnorm(n_size), nrow = n_obs, ncol = n_vars) %*%
-                  diag(2 ^ (n_vars:1)))
+                  diag(2 ^ (n_vars:1)),
+                
+                "random matrix with 0's and NA's" =
+                  matrix(sample(c(NA, 0, rnorm(n_size - 2)), n_size, replace = TRUE,
+                                prob = c(1 / n_vars, rep(1 / n_size, n_size - 1))),
+                         nrow = n_obs, ncol = n_vars))
 
 if (requireNamespace("zoo", quietly = TRUE)) {
-  test_ls <- lapply(test_ls, function(x) zoo::zoo(x, dates))
+  test_ls[1:2] <- lapply(test_ls[1:2], function(x) zoo::zoo(x, dates))
 }
 
-test_ls <- lapply(test_ls, setNames, paste0("x", rep(1:n_vars)))
+test_ls[1:2] <- lapply(test_ls[1:2], setNames, paste0("x", rep(1:n_vars)))
 
 # colnames(test_ls[[1]]) <- paste0("x", rep(1:n_vars))

@@ -284,7 +284,6 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     int n = weights.size();
     int n_rows_xy = xx.nrow();
     int n_cols_x = xx.ncol() + 1;
-    arma::uvec arma_comps = seq(n_comps) + 1;
     arma::uvec arma_any_na(n_rows_xy);
     arma::vec arma_n_obs(n_rows_xy);
     arma::vec arma_sum_w(n_rows_xy);
@@ -301,7 +300,10 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     // check 'width' argument for errors
     rolleigen::check_pos_int(width, "width");
     
-    // default 'n_comps' argument is all components
+    // default 'n_comps' argument is all components,
+    // otherwise check argument for errors
+    rolleigen::check_pos_int(n_comps, "n_comps");
+    arma::uvec arma_comps = seq(n_comps) + 1;
     rolleigen::check_comps(arma_comps, n_cols_x - 1, "n_comps", "x");
     
     // default 'weights' argument is equal-weighted,
@@ -389,7 +391,6 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     int n = weights.size();
     int n_rows_xy = xx.size();
     int n_cols_x = 1 + 1;
-    arma::uvec arma_comps = seq(n_comps) + 1;
     arma::uvec arma_any_na(n_rows_xy);
     arma::vec arma_n_obs(n_rows_xy);
     arma::vec arma_sum_w(n_rows_xy);
@@ -406,7 +407,10 @@ List roll_pcr_z(const SEXP& x, const NumericVector& y,
     // check 'width' argument for errors
     rolleigen::check_pos_int(width, "width");
     
-    // default 'n_comps' argument is all components
+    // default 'n_comps' argument is all components,
+    // otherwise check argument for errors
+    rolleigen::check_pos_int(n_comps, "n_comps");
+    arma::uvec arma_comps = seq(n_comps) + 1;
     rolleigen::check_comps(arma_comps, n_cols_x - 1, "n_comps", "x");
     
     // default 'weights' argument is equal-weighted,
@@ -513,9 +517,8 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     List result_z(2);
     List result(2);
 
-    if (intercept) {
-      n_cols_x += 1;
-    }
+    // 'intercept = FALSE' is not supported
+    n_cols_x += 1;
 
     // create a list of matrices,
     // otherwise a list of lists
@@ -534,7 +537,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
       NumericVector coef(wrap(arma_coef_z));
       coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
       List x_dimnames = xx.attr("dimnames");
-      rolleigen::xts_attr(coef, xx, dimnames_lm_x(x_dimnames, n_cols_x, intercept));
+      rolleigen::xts_attr(coef, xx, dimnames_lm_x(x_dimnames, n_cols_x, true));
 
       // create and return a matrix or xts object for r-squareds
       NumericVector rsq(wrap(arma_rsq_z));
@@ -567,7 +570,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
         NumericVector coef(wrap(arma_coef_z));
         coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
         List dimnames_x = xx.attr("dimnames");
-        rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
+        rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, true));
 
         // create and return a matrix or xts object for r-squareds
         NumericVector rsq(wrap(arma_rsq_z));
@@ -612,9 +615,8 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     List result_z(2);
     List result(2);
     
-    if (intercept) {
-      n_cols_x += 1;
-    }
+    // 'intercept = FALSE' is not supported
+    n_cols_x += 1;
     
     // create a list of matrices
     result_z = roll_pcr_z(xx, yy, width, n_comps,
@@ -630,7 +632,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     NumericVector coef(wrap(arma_coef_z));
     coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
     List dimnames_x = xx.attr("dimnames");
-    rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
+    rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, true));
     
     // create and return a matrix or xts object for r-squareds
     NumericVector rsq(wrap(arma_rsq_z));
@@ -665,9 +667,8 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     List result_z(2);
     List result(2);
     
-    if (intercept) {
-      n_cols_x += 1;
-    }
+    // 'intercept = FALSE' is not supported
+    n_cols_x += 1;
     
     // create a list of matrices,
     // otherwise a list of lists
@@ -686,7 +687,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
       NumericVector coef(wrap(arma_coef_z));
       coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
       List dimnames_x = xx.attr("dimnames");
-      rolleigen::xts_attr(coef, yy, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
+      rolleigen::xts_attr(coef, yy, dimnames_lm_x(dimnames_x, n_cols_x, true));
       
       // create and return a matrix or xts object for r-squareds
       NumericVector rsq(wrap(arma_rsq_z));
@@ -719,7 +720,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
         NumericVector coef(wrap(arma_coef_z));
         coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
         List dimnames_x = xxx.attr("dimnames");
-        rolleigen::xts_attr(coef, yy, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
+        rolleigen::xts_attr(coef, yy, dimnames_lm_x(dimnames_x, n_cols_x, true));
         
         // create and return a matrix or xts object for r-squareds
         NumericVector rsq(wrap(arma_rsq_z));
@@ -765,9 +766,8 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     List result_z(2);
     List result(2);
     
-    if (intercept) {
-      n_cols_x += 1;
-    }
+    // 'intercept = FALSE' is not supported
+    n_cols_x += 1;
     
     // create a list of matrices
     result_z = roll_pcr_z(xx, yy, width, n_comps,
@@ -783,7 +783,7 @@ List roll_pcr(const SEXP& x, const SEXP& y,
     NumericVector coef(wrap(arma_coef_z));
     coef.attr("dim") = IntegerVector::create(n_rows_xy, n_cols_x);
     List dimnames_x = xx.attr("dimnames");
-    rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, intercept));
+    rolleigen::xts_attr(coef, xx, dimnames_lm_x(dimnames_x, n_cols_x, true));
     
     // create and return a matrix or xts object for r-squareds
     NumericVector rsq(wrap(arma_rsq_z));

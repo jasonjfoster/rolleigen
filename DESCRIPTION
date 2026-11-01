@@ -1,7 +1,7 @@
 Type: Package
 Package: rolleigen
 Title: Rolling Eigenanalysis
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: 
     person("Jason", "Foster", , "jason.j.foster@gmail.com", role = c("aut", "cre"))
 Description: Fast and efficient computation of rolling and expanding
@@ -12,18 +12,17 @@ Description: Fast and efficient computation of rolling and expanding
     <doi:10.1037/h0071325>) and principal component regression (Massy,
     1965, <doi:10.1080/01621459.1965.10480787>) over rolling and expanding
     windows. For each window, the eigenvalues and eigenvectors are
-    computed from the covariance matrix and, optionally, ordered from the
-    largest to smallest eigenvalue to summarize the directions of greatest
-    variation in the data. A subset of leading components is then used to
-    fit a regression that mitigates collinearity in the explanatory
-    variables.  Use cases include dimensionality reduction, factor
-    extraction, and regression on collinear explanatory variables. The
-    package supports rolling and expanding windows, weights, and handling
-    of missing values via the min_obs, complete_obs, and na_restore
-    arguments. The implementation uses the online and offline algorithms
-    from the 'roll' package to compute rolling and expanding
-    cross-products efficiently, with parallelism across columns and
-    windows provided by 'RcppParallel'.
+    computed from the covariance matrix and, optionally, matched to the
+    previous window to track the directions of greatest variation in the
+    data. A subset of leading components is then used to fit a regression
+    that mitigates collinearity in the explanatory variables.  Use cases
+    include dimensionality reduction, factor extraction, and regression on
+    collinear explanatory variables. The package supports rolling and
+    expanding windows, weights, and handling of missing values via the
+    min_obs, complete_obs, and na_restore arguments. The implementation
+    uses the online and offline algorithms from the 'roll' package to
+    compute rolling and expanding cross-products efficiently, with
+    parallelism across columns and windows provided by 'RcppParallel'.
 License: GPL (>= 2)
 URL: https://github.com/jasonjfoster/rolleigen
 BugReports: https://github.com/jasonjfoster/rolleigen/issues

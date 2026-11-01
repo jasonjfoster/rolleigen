@@ -4,7 +4,7 @@
 \alias{roll_pcr}
 \title{Rolling Principal Component Regressions}
 \usage{
-roll_pcr(x, y, width, n_comps = ncol(x), weights = rep(1, width),
+roll_pcr(x, y, width, n_comps = NCOL(x), weights = rep(1, width),
   intercept = TRUE, center = TRUE, scale = FALSE, min_obs = width,
   complete_obs = TRUE, na_restore = FALSE, online = TRUE)
 }
@@ -46,6 +46,16 @@ An object is the same class as \code{x}.}
 }
 \description{
 A function for computing the rolling and expanding principal component regressions of time-series data.
+}
+\details{
+The eigenvectors of the weighted covariance matrix of \code{x} are computed within each
+window and ordered from the largest to smallest eigenvalue, then \code{y} is regressed on the
+leading \code{n_comps} components and the coefficients are mapped back to the original variables.
+
+\code{intercept = FALSE}, \code{center = FALSE}, \code{scale = TRUE} and \code{complete_obs = FALSE}
+are not supported, so a warning is given and the arguments are ignored. The online algorithm is
+used for equal or exponential decay \code{weights}, otherwise the offline algorithm is used with
+a warning if \code{online} is \code{TRUE}.
 }
 \examples{
 n <- 15

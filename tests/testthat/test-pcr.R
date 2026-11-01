@@ -1,7 +1,5 @@
 test_that("equivalent to pls::pcr", {
   
-  # skip("long-running test")
-  
   packages <- c("zoo", "pls")
   
   status <- vapply(packages, requireNamespace, logical(1), quietly = TRUE)
@@ -14,9 +12,9 @@ test_that("equivalent to pls::pcr", {
   }
   
   # test data
-  test_data_x <- c(lapply(test_ls, function(x){x[ , 1:3]}),
+  test_data_x <- c(lapply(test_ls[1:2], function(x){x[ , 1:3]}),
                    list("random vector with 0's" = test_ls[[1]][ , 1]))
-  test_data_y <- c(lapply(test_ls, function(x){x[ , 4, drop = FALSE]}), # univariate 'y' for pls::pcr
+  test_data_y <- c(lapply(test_ls[1:2], function(x){x[ , 4, drop = FALSE]}), # univariate 'y' for pls::pcr
                    list("random vector with 0's" = test_ls[[1]][ , 4]))
   
   for (ax in 1:length(test_data_x)) {

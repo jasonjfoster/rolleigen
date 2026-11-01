@@ -42,6 +42,16 @@ eigenvalues.}
 \description{
 A function for computing the rolling and expanding eigenvalues and eigenvectors of time-series data.
 }
+\details{
+The eigenvalues and eigenvectors of the weighted covariance matrix of \code{x}, or the
+weighted correlation matrix if \code{scale} is \code{TRUE}, are computed within each window and
+returned in decreasing order, consistent with \code{base::eigen}. If \code{order} is \code{TRUE}
+then the components of each window are matched, in sign and order, to the previous window by the
+largest absolute cosine similarity, which assumes full-rank windows.
+
+The online algorithm is used for equal or exponential decay \code{weights}, otherwise the offline
+algorithm is used with a warning if \code{online} is \code{TRUE}.
+}
 \examples{
 n <- 15
 m <- 3
