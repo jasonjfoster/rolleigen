@@ -1,7 +1,14 @@
 test_that("equivalent to base::eigen", {
   
-  if (!requireNamespace("zoo", quietly = TRUE)) {
-    skip("zoo package required for this test")
+  packages <- c("zoo")
+  
+  status <- vapply(packages, requireNamespace, logical(1), quietly = TRUE)
+  
+  if (!all(status)) {
+    
+    skip(paste0(paste0("'", paste0(names(status[!status]), collapse = ", '", sep = "'")),
+                "' package(s) required for this test"))
+    
   }
   
   # test data
