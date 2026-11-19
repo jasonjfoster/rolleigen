@@ -22,6 +22,7 @@ test_that("equal to online algorithm", {
         for (d in 1:length(test_complete_obs)) {
           for (e in 1:length(test_na_restore)) {
             for (f in 1:length(test_weights)) {
+              
               for (g in 1:length(test_center)) {
                 for (h in 1:length(test_scale)) {
                   for (j in 1:length(test_order)) {
@@ -87,6 +88,7 @@ test_that("equal to online algorithm", {
                                                          test_na_restore[e], test_online[2])))
                   
                 }
+                
               }
               
             }

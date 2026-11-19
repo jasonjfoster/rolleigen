@@ -20,31 +20,30 @@ test_that("equivalent to pls::pcr", {
   for (ax in 1:length(test_data_x)) {
     for (b in 1:length(test_width)) {
       
-      width <- test_width[b]     
+      width <- test_width[b]
       test_weights <- list(rep(1, width))
       
-      for (c in 1:length(test_comps)) {
-        
-        if (!is.matrix(test_data_x[[ax]])) {
-          n_comps <- 1
-        } else {
-          n_comps <- test_comps[c]
-        }
-        
-        for (ay in 1:(length(test_data_y))) {
+      for (f in 1:length(test_weights)) {
+        for (g in 1:length(test_comps)) {
           
-          expect_equal(roll_pcr(test_data_x[[ax]], test_data_y[[ay]],
-                                width, n_comps,
-                                test_weights[[1]], test_intercept[1],
-                                test_center[1], test_scale[2],
-                                test_min_obs[1]),
-                       rollapplyr_pcr(test_data_x[[ax]], test_data_y[[ay]],
-                                      width, n_comps,
-                                      test_intercept[1], test_center[1],
-                                      test_scale[2]))
+          # "maximum value of 'n_comps' must be less than or equal to number of columns in 'x'"
+          n_comps <- min(test_comps[g], NCOL(test_data_x[[ax]]))
+          
+          for (ay in 1:length(test_data_y)) {
+            
+            expect_equal(roll_pcr(test_data_x[[ax]], test_data_y[[ay]],
+                                  width, n_comps,
+                                  test_weights[[f]], test_intercept[1],
+                                  test_center[1], test_scale[2],
+                                  test_min_obs[1]),
+                         rollapplyr_pcr(test_data_x[[ax]], test_data_y[[ay]],
+                                        width, n_comps,
+                                        test_intercept[1], test_center[1],
+                                        test_scale[2]))
+            
+          }
           
         }
-
       }
       
     }

@@ -133,22 +133,22 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
                         error = function(x) NULL)
         
       }
-
+      
       if (!is.null(fit)) {
-
+        
         df_fit <- n_cols_x
         df_resid <- nrow(data) - n_cols_x
         
         if (!is.na(df_resid) && (df_resid >= 0)) {
-
+          
           summary_fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
-
+          
           if (length(summary_fit_coef) == df_fit) {
-
+            
             result[["coefficients"]][i, ] <- summary_fit_coef
-
+            
             var_y <- crossprod(y_subset)
-
+            
             if (!is.na(var_y) && (var_y > .Machine$double.eps)) {
               if (intercept) {
                 # result[["r.squared"]][i, ] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
@@ -158,11 +158,11 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
                 result[["r.squared"]][i, ] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
               }
             }
-
+            
           }
-
+          
         }
-
+        
       }
       
     }
@@ -229,22 +229,22 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
                         error = function(x) NULL)
         
       }
-
+      
       if (!is.null(fit)) {
-
+        
         df_fit <- n_cols_x
         df_resid <- nrow(data) - n_cols_x
-
+        
         if (!is.na(df_resid) && (df_resid >= 0)) {
-
+          
           summary_fit_coef <- coef(fit, ncomp = n_comps, intercept = intercept)[ , , 1]
-
+          
           if (length(summary_fit_coef) == df_fit) {
-
+            
             result[["coefficients"]][i] <- summary_fit_coef
-
+            
             var_y <- crossprod(y_subset)
-
+            
             if (!is.na(var_y) && (var_y > .Machine$double.eps)) {
               if (intercept) {
                 # result[["r.squared"]][i] <- pls::R2(fit, ncomp = n_comps, intercept = intercept)$val[ , , 2]
@@ -254,11 +254,11 @@ rollapplyr_pcr <- function(x, y, width, n_comps, intercept, center, scale) {
                 result[["r.squared"]][i] <- R2.mvr(fit, ncomp = n_comps, intercept = intercept)$val[ , , 1]
               }
             }
-
+            
           }
-
+          
         }
-
+        
       }
       
     }

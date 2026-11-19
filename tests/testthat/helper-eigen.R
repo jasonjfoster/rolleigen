@@ -1,4 +1,4 @@
-cov.wt_cov <- function(x, weights, center) {
+cov_weights <- function(x, weights, center) {
   
   result <- cov.wt(x, wt = weights, center = center)$cov
   
@@ -6,7 +6,7 @@ cov.wt_cov <- function(x, weights, center) {
   
 }
 
-cov.wt_cor <- function(x, weights, center) {
+cor_weights <- function(x, weights, center) {
   
   result <- cov.wt(x, wt = weights, cor = TRUE, center = center)$cor
   
@@ -30,7 +30,7 @@ rollapplyr_cube <- function(f, x, width, weights, ...) {
   }
   
   # attr(result, "dim") <- c(n_cols_x, n_cols_x, n_rows_x)
-  # 
+  #
   # x_dimnames <- dimnames(x)
   # attr(result, "dimnames") <- list(x_dimnames[[2]], x_dimnames[[2]], NULL)
   
@@ -62,18 +62,18 @@ rollapplyr_eigen <- function(x, width, weights, center, scale, order, min_obs) {
   n_cols_x <- ncol(x)
   result <- list("values" = matrix(as.numeric(NA), n_rows_x, n_cols_x),
                  "vectors" = array(as.numeric(NA), c(n_cols_x, n_cols_x, n_rows_x)))
-    
+  
   if (scale) {
-    cov <- rollapplyr_cube(cov.wt_cor, x, width, weights, center = center)
+    cov <- rollapplyr_cube(cor_weights, x, width, weights, center = center)
   } else {
-    cov <- rollapplyr_cube(cov.wt_cov, x, width, weights, center = center)
+    cov <- rollapplyr_cube(cov_weights, x, width, weights, center = center)
   }
   
   for (i in 1:n_rows_x) {
     
     if ((min(i, width) < min_obs) || anyNA(cov[ , , i]) || any(is.infinite(cov[ , , i]))) {
       
-      result[["values"]][i , ] <- NA
+      result[["values"]][i, ] <- NA
       result[["vectors"]][ , , i] <- NA
       
     } else {
@@ -135,6 +135,7 @@ rollapplyr_order <- function(result) {
       }
       
     }
+    
   }
   
   return(result)
